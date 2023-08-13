@@ -1,10 +1,9 @@
 ﻿using Domain.Customers.ValueObjects;
 using Domain.Reservations.Aggregate;
 using SharedKernal.Entities;
-using System.Runtime.InteropServices;
 
 namespace Domain.Customers.Aggregate;
-
+// DDD 
 public class Customer : AggregateRoot
 {
 	private SerialNumber _serialNumber = new SerialNumber(0);
