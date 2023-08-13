@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SharedKernal\SharedKernal.csproj" />
+    <ProjectReference Include="..\SharedResources\SharedResources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Customers\DomainEvents\" />
+    <Folder Include="Meals\DomainEvents\" />
+    <Folder Include="Meals\Entities\" />
+    <Folder Include="Reservations\Entities\" />
+  </ItemGroup>
+
+</Project>
