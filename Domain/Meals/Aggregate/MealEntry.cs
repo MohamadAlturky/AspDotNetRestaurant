@@ -1,11 +1,11 @@
-﻿using Domain.Meals.Aggregate;
+﻿using Domain.Meals.Entities;
 using Domain.Meals.ValueObjects;
 using Domain.Reservations.Aggregate;
 using Domain.Shared.ValueObjects;
 using SharedKernal.Entities;
 
-namespace Domain.Shared.Entities;
-public class MealEntry : Entity
+namespace Domain.Meals.Aggregate;
+public class MealEntry : AggregateRoot
 {
 
 	#region Private Data Members
@@ -17,7 +17,7 @@ public class MealEntry : Entity
 	#region Properties
 	public long MealId { get; set; }
 	public bool CustomerCanCancel { get; set; } = true;
-	public DateTime AtDay { get; set; } = new ();
+	public DateTime AtDay { get; set; } = new();
 	public int PreparedCount { get => _preparedCount.Value; set => _preparedCount = new NumberOfPreparedMeals(value); }
 	public int LastNumberInQueue { get => _lastNumberInQueue.Value; set => _lastNumberInQueue = new LastNumberInQueue(value); }
 	public int ReservationsCount { get => _reservationsCount.Value; set => _reservationsCount = new NumberOfReservations(value); }
@@ -25,7 +25,7 @@ public class MealEntry : Entity
 	#endregion
 
 	#region Navidations
-	public Meal? Meal { get; set; }
+	public MealInformation? Meal { get; set; }
 	#endregion
 
 	#region Constructors

@@ -11,6 +11,7 @@ using Infrastructure.DataAccess.PermissionsService;
 using Infrastructure.DataAccess.UnitOfWork;
 using Infrastructure.DataAccess.UserPersistence;
 using Infrastructure.MealsPersistence.Repository;
+using Infrastructure.Notification;
 using Infrastructure.PricingRecordsPersistance.Repository;
 using Infrastructure.ReservationsPersistence.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +32,10 @@ public static class DependencyInjection
 		services.AddScoped<IHashHandler, HashHandler>();
 		services.AddScoped<IPermissionService, PermissionService>();
 		services.AddScoped<IJwtProvider, JwtProvider>();
-		services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
-		services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+		services.AddSingleton<IAuthorizationHandler, 
+			PermissionAuthorizationHandler>();
+		services.AddSingleton<IAuthorizationPolicyProvider, 
+			PermissionAuthorizationPolicyProvider>();
+		services.AddSignalR();
 	}
 }

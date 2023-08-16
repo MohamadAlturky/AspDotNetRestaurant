@@ -18,7 +18,7 @@ internal class UpdateMealCommandHandler : ICommandHandler<UpdateMealCommand>
 
 	public async Task<Result> Handle(UpdateMealCommand request, CancellationToken cancellationToken)
 	{
-		_mealRepository.Update(request.meal);
+		_mealRepository.UpdateInformation(request.meal);
 	
 		await _unitOfWork.SaveChangesAsync();
 

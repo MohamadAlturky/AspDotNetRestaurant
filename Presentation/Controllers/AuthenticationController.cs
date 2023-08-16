@@ -10,6 +10,9 @@ using Infrastructure.Authentication.Register;
 using Presentation.Factories;
 using Infrastructure.Authentication.Permissions;
 using Presentation.PermissionsContainer;
+using Presentation.ApiModels;
+using Infrastructure.DataAccess.UserPersistence;
+using Application.IdentityChecker;
 
 namespace Presentation.Controllers;
 [Route("api/[controller]")]
@@ -17,11 +20,14 @@ namespace Presentation.Controllers;
 public class AuthenticationController : APIController
 {
 	private readonly ILogger<AuthenticationController> _logger;
-
-	public AuthenticationController(ILogger<AuthenticationController> logger, ISender sender, IMapper mapper)
+	private readonly IUserPersistenceService _userPersistenceService;
+	private readonly IExecutorIdentityProvider _identityProvider;
+	public AuthenticationController(IExecutorIdentityProvider identityProvider, IUserPersistenceService persistenceService, ILogger<AuthenticationController> logger, ISender sender, IMapper mapper)
 		: base(sender, mapper)
 	{
+		_identityProvider = identityProvider;
 		_logger = logger;
+		_userPersistenceService = persistenceService;
 	}
 
 
@@ -49,6 +55,28 @@ public class AuthenticationController : APIController
 		catch (Exception exception)
 		{
 			return BadRequest(Result.Failure(new Error("Model State", exception.Message)));
+		}
+	}
+
+
+
+
+
+	[HttpPut("ChangePassword")]
+	[HasPermission(AuthorizationPermissions.ReadContent)]
+	public async Task<IActionResult> ChangePassword([FromForm] ChangePasswordModel model)
+	{
+		try
+		{
+			long id = long.Parse(_identityProvider.GetExecutorId());
+
+			await _userPersistenceService.ChangePassword(id, model.OldPassword, model.NewPassword);
+
+			return Ok();
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("Problem", exception.Message)));
 		}
 	}
 

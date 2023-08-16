@@ -20,7 +20,7 @@
 //	{
 //		try
 //		{
-//			_customerRepository.Update(request.customer);
+//			_customerRepository.UpdateInformation(request.customer);
 //		}
 //		catch (Exception exception){
 //			return Result.Failure(new SharedKernal.Utilities.Errors.Error("", exception.Message));

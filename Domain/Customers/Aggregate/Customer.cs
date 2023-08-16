@@ -3,7 +3,7 @@ using Domain.Reservations.Aggregate;
 using SharedKernal.Entities;
 
 namespace Domain.Customers.Aggregate;
-// DDD 
+// DDDD
 public class Customer : AggregateRoot
 {
 	private SerialNumber _serialNumber = new SerialNumber(0);

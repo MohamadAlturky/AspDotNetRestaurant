@@ -1,5 +1,5 @@
-﻿using Domain.Meals.Repositories;
-using Domain.Shared.Entities;
+﻿using Domain.Meals.Aggregate;
+using Domain.Meals.Repositories;
 
 namespace Domain.Shared.Proxies;
 public class MealRepositoryProxy

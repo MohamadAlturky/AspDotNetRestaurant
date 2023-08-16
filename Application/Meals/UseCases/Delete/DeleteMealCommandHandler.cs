@@ -3,6 +3,8 @@ using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;
 using SharedKernal.Utilities.Result;
 using Domain.Meals.Aggregate;
+using Domain.Meals.Entities;
+
 namespace Application.Meals.UseCases.Delete;
 internal class DeleteMealCommandHandler : ICommandHandler<DeleteMealCommand>
 {
@@ -20,7 +22,7 @@ internal class DeleteMealCommandHandler : ICommandHandler<DeleteMealCommand>
 	{
 		try
 		{
-			_mealRepository.Delete(new Meal(request.mealId));
+			_mealRepository.DeleteInformation(new MealInformation(request.mealId));
 
 			await _unitOfWork.SaveChangesAsync();
 		}

@@ -1,10 +1,10 @@
-﻿using Domain.Meals.ValueObjects;
-using Domain.Shared.Entities;
+﻿using Domain.Meals.Aggregate;
+using Domain.Meals.ValueObjects;
 using Domain.Shared.ValueObjects;
 using SharedKernal.Entities;
 
-namespace Domain.Meals.Aggregate;
-public class Meal : AggregateRoot
+namespace Domain.Meals.Entities;
+public class MealInformation : Entity
 {
 	private MealType _type = MealType.UnDefined;
 	private NumberOfCalories _numberOfCalories = new NumberOfCalories(0);
@@ -23,8 +23,8 @@ public class Meal : AggregateRoot
 
 
 
-	public Meal(long id) : base(id) { }
-	public Meal() : base(0) { }
+	public MealInformation(long id) : base(id) { }
+	public MealInformation() : base(0) { }
 
 
 
@@ -35,7 +35,7 @@ public class Meal : AggregateRoot
 		{
 			throw new Exception("hasAnEntryInTheSameDate");
 		}
-		MealEntries.Add(new MealEntry(0, this.Id)
+		MealEntries.Add(new MealEntry(0, Id)
 		{
 
 			PreparedCount = preparedCount,
@@ -43,7 +43,7 @@ public class Meal : AggregateRoot
 		});
 	}
 
-	public static Meal Create(int numberOfCalories,
+	public static MealInformation Create(int numberOfCalories,
 		string type,
 		string description,
 		string imagePath,
@@ -51,7 +51,7 @@ public class Meal : AggregateRoot
 		long id = 0)
 	{
 
-		return new Meal(id)
+		return new MealInformation(id)
 		{
 			NumberOfCalories = numberOfCalories,
 			Type = type,

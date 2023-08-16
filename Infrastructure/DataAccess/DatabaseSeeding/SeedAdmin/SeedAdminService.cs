@@ -44,7 +44,7 @@ public class SeedAdminService : ISeedAdminService
 				IsActive = true
 			};
 
-			//_context.Set<Customer>().Add(customer);
+			//_context.Set<Customer>().AddInformation(customer);
 			//_context.SaveChanges();
 
 			Role? role = _context.Set<Role>().Find(RolesDictionary.Manager.Id);

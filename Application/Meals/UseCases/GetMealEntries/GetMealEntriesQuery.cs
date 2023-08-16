@@ -1,4 +1,4 @@
-﻿using Domain.Shared.Entities;
+﻿using Domain.Meals.Aggregate;
 using SharedKernal.CQRS.Queries;
 
 namespace Application.Meals.UseCases.GetMealEntries;

@@ -1,5 +1,6 @@
 ﻿using Domain.Customers.Aggregate;
 using Domain.Meals.Aggregate;
+using Domain.Meals.Entities;
 using Domain.Shared.Entities;
 using Presentation.ApiModels.Customers;
 using Presentation.ApiModels.MealEntry;
@@ -10,8 +11,8 @@ namespace Presentation.Mappers;
 
 public interface IMapper
 {
-	public MealDTO Map(Meal meal);
-	public Meal Map(MealDTO meal);
+	public MealDTO Map(MealInformation meal);
+	public MealInformation Map(MealDTO meal);
 	public MealEntry Map(MealEntryDTO meal);
 	public MealEntryDTO Map(MealEntry meal);
 	public Customer Map(CustomerDTO customerDTO);

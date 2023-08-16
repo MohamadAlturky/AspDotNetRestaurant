@@ -1,4 +1,4 @@
-﻿using Domain.Shared.Entities;
+﻿using Domain.Meals.Aggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

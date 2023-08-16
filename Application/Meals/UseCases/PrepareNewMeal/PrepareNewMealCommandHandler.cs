@@ -1,4 +1,4 @@
-﻿using Domain.Meals.Aggregate;
+﻿using Domain.Meals.Entities;
 using Domain.Meals.Repositories;
 using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;
@@ -22,7 +22,7 @@ internal class PrepareNewMealCommandHandler : ICommandHandler<PrepareNewMealComm
 	{
 		try
 		{
-			Meal? meal = _mealRepository.GetById(request.mealId);
+			MealInformation? meal = _mealRepository.GetInformationById(request.mealId);
 
 			if(meal is null)
 			{
@@ -38,7 +38,7 @@ internal class PrepareNewMealCommandHandler : ICommandHandler<PrepareNewMealComm
 
 			meal.PrepareNewEntry(date, request.numberOfUnits, checkIfMealHasEntryInDay);
 
-			_mealRepository.Update(meal);
+			_mealRepository.UpdateInformation(meal);
 
 			await _unitOfWork.SaveChangesAsync();
 		}

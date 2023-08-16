@@ -1,7 +1,7 @@
 ﻿using Domain.Customers.Aggregate;
+using Domain.Meals.Aggregate;
 using Domain.Reservations.Aggregate;
 using Domain.Reservations.Repositories;
-using Domain.Shared.Entities;
 using Domain.Shared.Proxies;
 using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;

@@ -1,5 +1,5 @@
-﻿using Domain.Meals.Aggregate;
+﻿using Domain.Meals.Entities;
 using SharedKernal.CQRS.Commands;
 
 namespace Application.UseCases.Meals.Create;
-public sealed record CreateMealCommand(Meal Meal) : ICommand;
+public sealed record CreateMealCommand(MealInformation Meal) : ICommand;

@@ -1,6 +1,7 @@
 ﻿using Infrastructure.DataAccess.DBContext;
 using Infrastructure.DataAccess.Interceptors;
 using Infrastructure.DependencyInjectionConfiguration;
+using Infrastructure.Notification;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -22,15 +23,15 @@ builder.Services.AddPresentation();
 builder.Services.AddApplication();
 builder.Services.AddLocalizationBuilders();
 
-
+builder.Services.AddScoped(typeof(NotificationsHub));
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Persistance level
 builder.Services.AddDbContext<RestaurantContext>((serviceProvider, option) =>
 {
-	DomainEventsCollectorInterceptor? interceptor 
+	DomainEventsCollectorInterceptor? interceptor
 	= serviceProvider.GetService<DomainEventsCollectorInterceptor>();
-	if (interceptor is null 
+	if (interceptor is null
 		|| connectionString is null)
 	{
 		throw new ApplicationException();
@@ -45,10 +46,11 @@ builder.Services.AddCors(options =>
 	options.AddPolicy(name: AllowSpecificOrigins,
 					  policy =>
 					  {
+						  //policy.WithOrigins("*")
 						  policy.WithOrigins("http://localhost:5173")
 						  .AllowAnyHeader()
-						  .AllowAnyOrigin()
-						  .AllowAnyMethod();
+					      .AllowAnyMethod()
+						  .AllowCredentials();
 					  });
 });
 
@@ -146,6 +148,12 @@ app.UseDirectoryBrowser(new DirectoryBrowserOptions
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+//app.UseEndpoints(endpoint =>
+//{
+//	endpoint.MapControllers();
+//	endpoint.MapHub<NotificationsHub>("/notifications");
+//});
 
+app.MapControllers();
+app.MapHub<NotificationsHub>("/notifications");
 app.Run();

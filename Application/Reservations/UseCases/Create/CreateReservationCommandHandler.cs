@@ -1,6 +1,8 @@
 ﻿using Application.Reservations.UseCases.Cancel;
 using Domain.Customers.Aggregate;
+using Domain.Meals.Aggregate;
 using Domain.Reservations.Aggregate;
+using Domain.Reservations.Factories;
 using Domain.Reservations.Repositories;
 using Domain.Shared.Entities;
 using Domain.Shared.Proxies;
@@ -71,7 +73,7 @@ internal class CreateReservationCommandHandler : ICommandHandler<CreateReservati
 			Reservation reservation;
 			if (firstReservationOnWaitingToCancel is null)
 			{
-				reservation = Reservation.Create(entry, customer,
+				reservation = ReservationsFactory.Create(entry, customer,
 												 pricingRecord, request.customerId,
 												 request.orderedMealId,
 												 isCustomerHasAReservationOnThisEntry);

@@ -1,5 +1,5 @@
-﻿using Domain.Meals.Aggregate;
+﻿using Domain.Meals.Entities;
 using SharedKernal.CQRS.Commands;
 
 namespace Application.Meals.UseCases.Update;
-public sealed record UpdateMealCommand(Meal meal) : ICommand;
+public sealed record UpdateMealCommand(MealInformation meal) : ICommand;

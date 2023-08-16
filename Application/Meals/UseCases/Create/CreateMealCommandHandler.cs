@@ -23,7 +23,7 @@ public class GetMealsCommandHandler : ICommandHandler<CreateMealCommand>
 
 		try
 		{
-			_mealRepository.Add(request.Meal);
+			_mealRepository.AddInformation(request.Meal);
 
 			await _unitOfWork.SaveChangesAsync();
 		}

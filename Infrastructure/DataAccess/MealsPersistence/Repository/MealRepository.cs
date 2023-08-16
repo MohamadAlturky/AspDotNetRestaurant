@@ -1,7 +1,7 @@
 ﻿using Domain.Meals.Aggregate;
+using Domain.Meals.Entities;
 using Domain.Meals.Repositories;
 using Domain.Meals.ValueObjects;
-using Domain.Shared.Entities;
 using Domain.Shared.ReadModels;
 using Infrastructure.DataAccess.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -18,22 +18,22 @@ public class MealRepository : IMealRepository
 	}
 
 
-	public void Add(Meal Entity)
+	public void AddInformation(MealInformation Entity)
 	{
 		// we will make the id = 0 to let EF Core set the primary key with auto increament value
 		Entity.Id = 0;
 
-		_context.Set<Meal>().Add(Entity);
+		_context.Set<MealInformation>().Add(Entity);
 	}
 
-	public void Delete(Meal Entity)
+	public void DeleteInformation(MealInformation Entity)
 	{
 		throw new NotImplementedException();
 	}
 
-	public IEnumerable<Meal> GetAll()
+	public IEnumerable<MealInformation> GetAllInformations()
 	{
-		return _context.Set<Meal>().ToList();
+		return _context.Set<MealInformation>().ToList();
 	}
 
 	public List<MealEntry> GetEntriesByDate(DateOnly date)
@@ -46,9 +46,9 @@ public class MealRepository : IMealRepository
 			.ToList();
 	}
 
-	public Meal? GetById(long id)
+	public MealInformation? GetInformationById(long id)
 	{
-		return _context.Set<Meal>().Find(id);
+		return _context.Set<MealInformation>().Find(id);
 	}
 
 	public IEnumerable<MealEntry> GetMealEntries(long mealId)
@@ -59,20 +59,20 @@ public class MealRepository : IMealRepository
 			.ToList();
 	}
 
-	public IEnumerable<Meal> GetPage(int pageSize, int pageNumber)
+	public IEnumerable<MealInformation> GetInformationsPage(int pageSize, int pageNumber)
 	{
 		throw new NotImplementedException();
 	}
 
 
-	public void Update(Meal Entity)
+	public void UpdateInformation(MealInformation Entity)
 	{
-		_context.Set<Meal>().Update(Entity);
+		_context.Set<MealInformation>().Update(Entity);
 	}
 
-	public Meal? GetMealWithEntry(long id, Func<MealEntry, bool> entrySelector)
+	public MealInformation? GetMealWithEntry(long id, Func<MealEntry, bool> entrySelector)
 	{
-		return _context.Set<Meal>()
+		return _context.Set<MealInformation>()
 			   .Where(meal => meal.Id == id)
 			   .Include(meal => meal.MealEntries
 				   .Where(entry => entrySelector(entry)))
@@ -98,17 +98,17 @@ public class MealRepository : IMealRepository
 	public List<AutoCompleteModel> GetAutoComplete(string partOfMealName, MealType mealType)
 	{
 		var type = mealType.ToString();
-		return _context.Set<Meal>()
+		return _context.Set<MealInformation>()
 			.Where(meal => meal.Type == type)
 			.Where(meal => meal.Name.Contains(partOfMealName))
 			.Select(meal => new AutoCompleteModel(meal.Id, meal.Name))
 			.ToList();
 	}
 
-	public List<Meal> GetEntriesByNameAndType(string mealName, MealType type)
+	public List<MealInformation> GetEntriesByNameAndType(string mealName, MealType type)
 	{
 		var stringType = type.ToString();
-		return _context.Set<Meal>()
+		return _context.Set<MealInformation>()
 			.Where(meal => meal.Type == stringType)
 			.Where(meal => meal.Name.Contains(mealName))
 			.ToList();

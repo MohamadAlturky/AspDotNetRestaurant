@@ -1,13 +1,15 @@
-﻿using Domain.Meals.Aggregate;
+﻿using Domain.Meals.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.DataAccess.Configurations;
-internal class MealsConfiguration : IEntityTypeConfiguration<Meal>
+internal class MealsConfiguration : IEntityTypeConfiguration<MealInformation>
 {
-	public void Configure(EntityTypeBuilder<Meal> builder)
+	public void Configure(EntityTypeBuilder<MealInformation> builder)
 	{
 		#region ID
+
+		builder.ToTable("Meal");
 		builder.HasKey(meal => meal.Id);
 
 		builder.HasIndex(meal => meal.Id).IsUnique();

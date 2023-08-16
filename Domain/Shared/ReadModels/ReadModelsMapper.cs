@@ -1,4 +1,4 @@
-﻿using Domain.Shared.Entities;
+﻿using Domain.Meals.Aggregate;
 
 namespace Domain.Shared.ReadModels;
 public static class ReadModelsMapper

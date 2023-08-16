@@ -1,5 +1,5 @@
-﻿using Domain.Meals.Repositories;
-using Domain.Shared.Entities;
+﻿using Domain.Meals.Aggregate;
+using Domain.Meals.Repositories;
 using SharedKernal.CQRS.Queries;
 using SharedKernal.Repositories;
 using SharedKernal.Utilities.Result;

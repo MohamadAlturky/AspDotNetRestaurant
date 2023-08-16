@@ -1,5 +1,5 @@
 ﻿using Application.Meals.UseCases.CancellationPermissions;
-using Domain.Meals.Aggregate;
+using Domain.Meals.Entities;
 using Domain.Meals.Repositories;
 using Domain.Shared.Entities;
 using SharedKernal.CQRS.Commands;
@@ -27,7 +27,7 @@ internal class EditCancellationPermissionsCommandHandler
 	{
 		try
 		{
-			Meal? meal = _mealRepository.GetMealWithEntry(request.mealId,
+			MealInformation? meal = _mealRepository.GetMealWithEntry(request.mealId,
 			entry => entry.Id == request.preparedMealId);
 
 
@@ -42,7 +42,7 @@ internal class EditCancellationPermissionsCommandHandler
 				Where(entry => entry.Id == request.preparedMealId)
 				.First().ModifyCancellationState(request.cancellationState);
 
-			_mealRepository.Update(meal);
+			_mealRepository.UpdateInformation(meal);
 
 			await _unitOfWork.SaveChangesAsync();
 

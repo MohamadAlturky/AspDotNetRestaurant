@@ -1,5 +1,6 @@
 ﻿using Domain.Customers.Aggregate;
 using Domain.Meals.Aggregate;
+using Domain.Meals.Entities;
 using Domain.Shared.Entities;
 using Presentation.ApiModels.Customers;
 using Presentation.ApiModels.MealEntry;
@@ -11,7 +12,7 @@ namespace Presentation.Mappers;
 public class Mapper : IMapper
 {
 
-	public MealDTO Map(Meal meal) => new MealDTO
+	public MealDTO Map(MealInformation meal) => new MealDTO
 	{
 		Id = meal.Id,
 		Description = meal.Description,
@@ -22,7 +23,7 @@ public class Mapper : IMapper
 	};
 
 
-	public Meal Map(MealDTO mealDTO) => new Meal(mealDTO.Id)
+	public MealInformation Map(MealDTO mealDTO) => new MealInformation(mealDTO.Id)
 	{
 		Type = mealDTO.Type,
 		NumberOfCalories = mealDTO.NumberOfCalories,

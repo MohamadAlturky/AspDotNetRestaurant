@@ -4,6 +4,15 @@ using SharedKernal.Repositories;
 namespace Domain.Reservations.Repositories;
 public interface IReservationRepository : IRepository<Reservation>
 {
+	IEnumerable<Reservation> GetAll();
+	IEnumerable<Reservation> GetPage(int pageSize, int pageNumber);
+	Reservation? GetById(long id);
+
+
+	void Add(Reservation Entity);
+	void Update(Reservation Entity);
+	void Delete(Reservation Entity);
+
 	bool CheckIfCustomerHasAMealReservation(long customerId, long mealEntryId);
 	List<Reservation> GetByDate(DateOnly day);
 	List<Reservation> GetBetweenTwoDate(DateOnly start, DateOnly end);
