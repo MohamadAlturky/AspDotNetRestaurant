@@ -1,7 +1,7 @@
 ﻿using Infrastructure.DataAccess.DBContext;
 using Infrastructure.DataAccess.Interceptors;
 using Infrastructure.DependencyInjectionConfiguration;
-using Infrastructure.Notification;
+using Infrastructure.Notification.Hubs;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;

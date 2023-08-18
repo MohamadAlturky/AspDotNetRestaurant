@@ -1,4 +1,4 @@
-﻿using Domain.Shared.Entities;
+﻿using Domain.Pricing.Aggregate;
 using Domain.Shared.Repositories;
 using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;

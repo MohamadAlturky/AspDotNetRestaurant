@@ -1,10 +1,12 @@
-﻿using Application;
+﻿using Application.AssemblyReference;
 using Application.Behaviors;
 using Application.IdentityChecker;
-using Domain;
+using Domain.AssemblyReference;
 using Domain.Shared.Proxies;
 using Infrastructure;
 using Infrastructure.DataAccess.Interceptors;
+using Infrastructure.Mail.Abstraction;
+using Infrastructure.Mail.HiastMail;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -12,8 +14,10 @@ using Microsoft.OpenApi.Models;
 using Presentation.IdentityChecker;
 using Presentation.Mappers;
 using Presentation.OptionsSetup.JWTOptionsSetup;
+using Presentation.OptionsSetup.MailAccountSetup;
 using Presentation.OptionsSetup.PipLineOptionsSetup;
 using Presentation.OptionsSetup.SettingsSetup;
+using Presentation.OptionsSetup.SmtpServerSetup;
 using Presentation.Services.MealsImagesSaver;
 using System.Reflection;
 using System.Text;
@@ -27,6 +31,8 @@ public static class DependencyInjection
 		services.ConfigureOptions<JwtOptionsSetup>();
 		services.ConfigureOptions<ApiSettingsSetup>();
 		services.ConfigureOptions<PipelineOptionsSetup>();
+		services.ConfigureOptions<SmtpServerSetUp>();
+		services.ConfigureOptions<MailAccountSetUp>();
 
 
 		//// Presentation level
@@ -38,10 +44,9 @@ public static class DependencyInjection
 		/// proxies
 		services.AddScoped(typeof(CustomerRepositoryProxy));
 		services.AddScoped(typeof(PricingRepositoryProxy));
-		services.AddScoped(typeof(MealRepositoryProxy));
+		services.AddScoped(typeof(MealEntryRepositoryProxy));
 
 		services.AddScoped<IAssetsSaver, AssetsSaver>();
-
 		services.AddSingleton<DomainEventsCollectorInterceptor>();
 
 

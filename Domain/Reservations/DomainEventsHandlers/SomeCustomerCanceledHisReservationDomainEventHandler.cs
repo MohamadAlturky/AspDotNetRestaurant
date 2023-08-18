@@ -30,15 +30,15 @@
 
 //	public async Task Handle(SomeCustomerCanceledHisReservationDomainEvent notification, CancellationToken cancellationToken)
 //	{
-//		MealEntry? mealEntry = _mealRepositoryProxy.GetMealEntry(notification.mealEntryId);
+//		MealEntry? mealEntry = _mealRepositoryProxy.GetMealEntryById(notification.mealEntryId);
 
 //		if (mealEntry is null)
 //		{
 //			throw new Exception("if(mealEntry is null)");
 //		}
-//		if (mealEntry.Meal is null)
+//		if (mealEntry.MealInformation is null)
 //		{
-//			throw new Exception("mealEntry.Meal is null");
+//			throw new Exception("mealEntry.MealInformation is null");
 //		}
 
 //		var availableMeals = mealEntry.PreparedCount - mealEntry.ReservationsCount;
@@ -59,7 +59,7 @@
 //			PricingRecord? price =
 //				_pricingRepositoryProxy
 //				.GetPriceByCustomerTypeJoinMealType
-//				(reservation.Customer.Category, mealEntry.Meal.Type);
+//				(reservation.Customer.Category, mealEntry.MealInformation.Type);
 
 //			if (price is null)
 //			{

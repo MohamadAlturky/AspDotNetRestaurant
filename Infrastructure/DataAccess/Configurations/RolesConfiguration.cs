@@ -20,8 +20,10 @@ internal class RolesConfiguration : IEntityTypeConfiguration<Role>
 
 		IEnumerable<Role> roles = new List<Role>()
 		{
+			RolesDictionary.User,
 			RolesDictionary.Manager,
-			RolesDictionary.User
+			RolesDictionary.Consumer,
+			RolesDictionary.Accountant
 		};
 		builder.HasData(roles);
 	}

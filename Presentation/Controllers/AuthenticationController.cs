@@ -13,6 +13,7 @@ using Presentation.PermissionsContainer;
 using Presentation.ApiModels;
 using Infrastructure.DataAccess.UserPersistence;
 using Application.IdentityChecker;
+using Infrastructure.ForgetPasswordHandling.ForgetPasswordServices;
 
 namespace Presentation.Controllers;
 [Route("api/[controller]")]
@@ -22,9 +23,11 @@ public class AuthenticationController : APIController
 	private readonly ILogger<AuthenticationController> _logger;
 	private readonly IUserPersistenceService _userPersistenceService;
 	private readonly IExecutorIdentityProvider _identityProvider;
-	public AuthenticationController(IExecutorIdentityProvider identityProvider, IUserPersistenceService persistenceService, ILogger<AuthenticationController> logger, ISender sender, IMapper mapper)
+	private readonly IForgetPasswordService _forgetPasswordService;
+	public AuthenticationController(IForgetPasswordService forgetPasswordService,IExecutorIdentityProvider identityProvider, IUserPersistenceService persistenceService, ILogger<AuthenticationController> logger, ISender sender, IMapper mapper)
 		: base(sender, mapper)
 	{
+		_forgetPasswordService = forgetPasswordService;
 		_identityProvider = identityProvider;
 		_logger = logger;
 		_userPersistenceService = persistenceService;
@@ -94,6 +97,32 @@ public class AuthenticationController : APIController
 		try
 		{
 			Result response = await _sender.Send(new RegisterNewCustomerCommand(UserFactory.Create(model), model.Password));
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
+			}
+
+			return Ok(response);
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("Model State", exception.Message)));
+		}
+	}
+
+
+	[HttpPost("ForgetPassword")]
+	public async Task<IActionResult> ForgetPassword([FromForm] int serialNumber)
+	{
+		if (!ModelState.IsValid)
+		{
+			return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
+		}
+
+		try
+		{
+			Result<long> response = await _forgetPasswordService.SendCodeVIAMailAsync(serialNumber);
 
 			if (response.IsFailure)
 			{

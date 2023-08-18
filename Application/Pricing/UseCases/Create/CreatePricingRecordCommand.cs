@@ -1,4 +1,4 @@
-﻿using Domain.Shared.Entities;
+﻿using Domain.Pricing.Aggregate;
 using SharedKernal.CQRS.Commands;
 
 namespace Application.Pricing.UseCases.Create;

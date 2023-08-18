@@ -3,7 +3,7 @@ using Domain.Reservations.Aggregate;
 using SharedKernal.Entities;
 
 namespace Domain.Customers.Aggregate;
-// DDDD
+
 public class Customer : AggregateRoot
 {
 	private SerialNumber _serialNumber = new SerialNumber(0);
@@ -42,32 +42,5 @@ public class Customer : AggregateRoot
 	{
 		int newBalance = _balance.Value + value;
 		_balance = new Balance(newBalance);
-	}
-
-	public static Customer Create(int serialNumber,
-		int balance,
-		string firstName,
-		string lastName,
-		string category,
-		string belongsToDepartment,
-		string notes,
-		bool isRegular,
-		bool eligible,
-		bool isActive,
-		long id = 0)
-	{
-		return new Customer(id)
-		{
-			SerialNumber = serialNumber,
-			Balance = balance,
-			FirstName = firstName,
-			LastName = lastName,
-			Category = category,
-			BelongsToDepartment = belongsToDepartment,
-			Notes = notes,
-			IsRegular = isRegular,
-			Eligible = eligible,
-			IsActive = isActive,
-		};
 	}
 }

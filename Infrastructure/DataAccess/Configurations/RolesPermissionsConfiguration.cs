@@ -12,11 +12,15 @@ public class RolesPermissionsConfiguration : IEntityTypeConfiguration<RolePermis
 
 		IEnumerable<RolePermission> rolePermissions = new List<RolePermission>()
 		{
-			Create(RolesDictionary.Manager,PermissionsDictionary.ReadContent),
 			Create(RolesDictionary.Manager,PermissionsDictionary.RegisterCustomer),
-			Create(RolesDictionary.Manager,PermissionsDictionary.CreateContent),
-			Create(RolesDictionary.Manager,PermissionsDictionary.OrderContent),
-			Create(RolesDictionary.Manager,PermissionsDictionary.ReadSystemInfo),
+			
+			Create(RolesDictionary.Manager,PermissionsDictionary.CreateSystemInformation),
+			Create(RolesDictionary.Manager,PermissionsDictionary.ReadSystemInformation),
+			
+			Create(RolesDictionary.Consumer,PermissionsDictionary.ConsumeReservations),
+			
+			Create(RolesDictionary.Accountant,PermissionsDictionary.EditBalances),
+			
 			Create(RolesDictionary.User,PermissionsDictionary.ReadContent),
 			Create(RolesDictionary.User,PermissionsDictionary.OrderContent)
 		};

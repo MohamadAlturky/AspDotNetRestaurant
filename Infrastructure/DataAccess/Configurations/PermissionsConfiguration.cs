@@ -14,9 +14,11 @@ public class PermissionsConfiguration : IEntityTypeConfiguration<Permission>
 		{
 			PermissionsDictionary.RegisterCustomer,
 			PermissionsDictionary.OrderContent,
-			PermissionsDictionary.CreateContent,
+			PermissionsDictionary.CreateSystemInformation,
 			PermissionsDictionary.ReadContent,
-			PermissionsDictionary.ReadSystemInfo
+			PermissionsDictionary.ReadSystemInformation,
+			PermissionsDictionary.ConsumeReservations,
+			PermissionsDictionary.EditBalances
 		};
 
 		builder.HasData(permissions);

@@ -1,10 +1,12 @@
 ﻿using Application.IdentityChecker;
 using Application.Reservations.UseCases.Cancel;
+using Application.Reservations.UseCases.ConsumeReservation;
 using Application.Reservations.UseCases.Create;
 using Application.Reservations.UseCases.GetBetweenTwoDates;
 using Application.Reservations.UseCases.GetByCustomerSerialNumber;
 using Application.Reservations.UseCases.GetByDate;
 using Infrastructure.Authentication.Permissions;
+using Infrastructure.DataAccess.UserPersistence;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ApiModels.Reservations;
@@ -21,11 +23,13 @@ public class ReservationsController : APIController
 {
 	private readonly ILogger<ReservationsController> _logger;
 	private readonly IExecutorIdentityProvider _identityProvider;
-	public ReservationsController(ILogger<ReservationsController> logger, ISender sender, IMapper mapper, IExecutorIdentityProvider identityProvider)
+	private readonly IUserPersistenceService _userPersistenceService;
+	public ReservationsController(IUserPersistenceService userPersistenceService,ILogger<ReservationsController> logger, ISender sender, IMapper mapper, IExecutorIdentityProvider identityProvider)
 		: base(sender, mapper)
 	{
 		_logger = logger;
 		_identityProvider = identityProvider;
+		_userPersistenceService = userPersistenceService;
 	}
 
 
@@ -155,6 +159,42 @@ public class ReservationsController : APIController
 		catch (Exception exception)
 		{
 			return BadRequest(Result.Failure(new Error("", exception.Message)));
+		}
+	}
+
+
+
+	[HttpPost("Consume")]
+	[HasPermission(AuthorizationPermissions.OrderContent)]
+	public async Task<IActionResult> Consume([FromForm] ReservationConsumeRequest request)
+	{
+		if (!ModelState.IsValid)
+		{
+			return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
+		}
+		try
+		{
+			Result checkUserInformation = _userPersistenceService.CheckPasswordValidity(request.SerialNumber,request.Password);
+
+
+			if (checkUserInformation.IsFailure)
+			{
+				return BadRequest(Result.Failure(checkUserInformation.Error));
+			}
+
+			Result response = await _sender.Send(new ConsumeReservationCommand(request.SerialNumber,
+				request.MealEntryId));
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(response.Error));
+			}
+
+			return Ok(response);
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("Model State", exception.Message)));
 		}
 	}
 }

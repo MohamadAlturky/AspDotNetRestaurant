@@ -18,7 +18,9 @@ public interface IReservationRepository : IRepository<Reservation>
 	List<Reservation> GetBetweenTwoDate(DateOnly start, DateOnly end);
 	List<Reservation> GetByCustomer(long id);
 	List<Reservation> GetOnWaitingToCancel(long mealEntryId);
-	Reservation? GetFirstOnWaitingToCancel(long mealEntryId);
+	Reservation? GetFirstOnWaitingToCancelWhereHisBalanceIsEnough(long mealEntryId);
 	List<Reservation> GetTheKFirstWaitingReservationsOnEntry(long mealEntryId,int K);
 	Reservation? GetFirstWaitingReservationsOnEntry(long entryId);
+	void DeleteAll(ICollection<Reservation> reservations);
+	Reservation? GetReservationOnMealEntryBySerialNumber(long mealEntryId, int serialNumber);
 }

@@ -16,4 +16,5 @@ public interface ICustomerRepository : IRepository<Customer>
 
 	Customer? GetBySerialNumber(int serialNumber);
 	long CalculateSumOfBalances();
+	void UpdateAll(List<Customer> customers);
 }

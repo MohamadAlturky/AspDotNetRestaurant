@@ -15,10 +15,10 @@ public static class PermissionsDictionary
 		Name = "RegisterCustomer"
 	};
 
-	public static Permission CreateContent => new()
+	public static Permission CreateSystemInformation => new()
 	{
 		Id = 3,
-		Name = "CreateContent"
+		Name = "CreateSystemInformation"
 	};
 
 	public static Permission OrderContent => new()
@@ -27,10 +27,21 @@ public static class PermissionsDictionary
 		Name = "OrderContent"
 	};
 
-	public static Permission ReadSystemInfo => new()
+	public static Permission ReadSystemInformation => new()
 	{
 		Id = 5,
-		Name = "ReadSystemInfo"
+		Name = "ReadSystemInformation"
 	};
 
+	public static Permission ConsumeReservations => new()
+	{
+		Id = 6,
+		Name = "ConsumeReservations"
+	};
+
+	public static Permission EditBalances => new()
+	{
+		Id = 7,
+		Name = "EditBalances"
+	};
 }

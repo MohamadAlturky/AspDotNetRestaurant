@@ -1,4 +1,4 @@
-﻿using Domain.Meals.Aggregate;
+﻿using Domain.MealEntries.Aggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,15 +17,15 @@ internal class MealEntriesConfiguration : IEntityTypeConfiguration<MealEntry>
 
 
 		#region MealId
-		builder.Property(meal => meal.MealId);
+		builder.Property(meal => meal.MealInformationId);
 
-		builder.HasIndex(meal => meal.MealId);
+		builder.HasIndex(meal => meal.MealInformationId);
 
-		//builder.HasOne(meal => meal.Meal).WithMany(meal=>meal.MealEntries).HasForeignKey(meal => meal.MealId);
+		//builder.HasOne(meal => meal.MealInformation).WithMany(meal=>meal.MealEntries).HasForeignKey(meal => meal.MealInformationId);
 
-		builder.HasOne(mealEntry => mealEntry.Meal)
+		builder.HasOne(mealEntry => mealEntry.MealInformation)
 				.WithMany(meal => meal.MealEntries)
-				.HasForeignKey(mealEntry => mealEntry.MealId);
+				.HasForeignKey(mealEntry => mealEntry.MealInformationId);
 		#endregion
 
 		#region AtDay

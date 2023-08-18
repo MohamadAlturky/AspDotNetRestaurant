@@ -10,5 +10,7 @@ public enum CustomerType
 	PoorPeople,
 	VeryPoorPeaple,
 	Employee,
-	Visitor
+	Visitor,
+	Accountant,
+	ReservationsConsumer
 }

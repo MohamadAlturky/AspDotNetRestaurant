@@ -1,10 +1,10 @@
 ﻿using Application.Reservations.UseCases.Cancel;
 using Domain.Customers.Aggregate;
-using Domain.Meals.Aggregate;
+using Domain.MealEntries.Aggregate;
+using Domain.Pricing.Aggregate;
 using Domain.Reservations.Aggregate;
-using Domain.Reservations.Factories;
 using Domain.Reservations.Repositories;
-using Domain.Shared.Entities;
+using Domain.Reservations.Services;
 using Domain.Shared.Proxies;
 using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;
@@ -17,21 +17,24 @@ internal class CreateReservationCommandHandler : ICommandHandler<CreateReservati
 
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly IReservationRepository _reservationRepository;
+	private readonly IReservationsService _reservationsService;
 	private readonly CustomerRepositoryProxy _customerRepositoryProxy;
-	private readonly MealRepositoryProxy _mealRepositoryProxy;
+	private readonly MealEntryRepositoryProxy _mealRepositoryProxy;
 	private readonly PricingRepositoryProxy _pricingRepositoryProxy;
 
 	public CreateReservationCommandHandler(IUnitOfWork unitOfWork,
 		IReservationRepository reservationRepository,
 		CustomerRepositoryProxy customerRepositoryProxy,
-		MealRepositoryProxy mealRepositoryProxy,
-		PricingRepositoryProxy pricingRepositoryProxy)
+		MealEntryRepositoryProxy mealRepositoryProxy,
+		PricingRepositoryProxy pricingRepositoryProxy,
+		IReservationsService reservationsService)
 	{
 		_unitOfWork = unitOfWork;
 		_reservationRepository = reservationRepository;
 		_customerRepositoryProxy = customerRepositoryProxy;
 		_mealRepositoryProxy = mealRepositoryProxy;
 		_pricingRepositoryProxy = pricingRepositoryProxy;
+		_reservationsService = reservationsService;
 	}
 
 	public async Task<Result<CreateReservationResponse>> Handle(CreateReservationCommand request,
@@ -41,7 +44,7 @@ internal class CreateReservationCommandHandler : ICommandHandler<CreateReservati
 		{
 			MealEntry? entry = _mealRepositoryProxy.GetMealEntry(request.orderedMealId);
 
-			if (entry is null || entry.Meal is null)
+			if (entry is null || entry.MealInformation is null)
 			{
 				return Result.Failure<CreateReservationResponse>(new Error("entry.Meal is null", "entry.Meal is null"));
 			}
@@ -54,7 +57,7 @@ internal class CreateReservationCommandHandler : ICommandHandler<CreateReservati
 			}
 
 			PricingRecord? pricingRecord = _pricingRepositoryProxy
-				.GetPriceByCustomerTypeJoinMealType(customer.Category, entry.Meal.Type);
+				.GetPriceByCustomerTypeJoinMealType(customer.Category, entry.MealInformation.Type);
 
 
 			if (pricingRecord is null)
@@ -66,31 +69,31 @@ internal class CreateReservationCommandHandler : ICommandHandler<CreateReservati
 				_reservationRepository.CheckIfCustomerHasAMealReservation(request.customerId,
 						request.orderedMealId);
 
-			Reservation? firstReservationOnWaitingToCancel =
-				_reservationRepository.GetFirstOnWaitingToCancel(entry.Id);
+			Reservation? firstQualifiedReservationOnWaitingToCancel =
+				_reservationRepository.GetFirstOnWaitingToCancelWhereHisBalanceIsEnough(entry.Id);
 
 
 			Reservation reservation;
-			if (firstReservationOnWaitingToCancel is null)
+			if (firstQualifiedReservationOnWaitingToCancel is null)
 			{
-				reservation = ReservationsFactory.Create(entry, customer,
+				reservation = _reservationsService.Create(entry, customer,
 												 pricingRecord, request.customerId,
 												 request.orderedMealId,
 												 isCustomerHasAReservationOnThisEntry);
 			}
 			else
 			{
-				(Reservation, Reservation) exchangableReservations = Reservation.Exchange(entry, customer,
+				(Reservation, Reservation) exchangableReservations = _reservationsService.CreateButExchange(entry, customer,
 											 pricingRecord, request.customerId,
 											 request.orderedMealId,
 											 isCustomerHasAReservationOnThisEntry,
-											 firstReservationOnWaitingToCancel);
+											 firstQualifiedReservationOnWaitingToCancel);
 
 				reservation = exchangableReservations.Item1;
 				
-				firstReservationOnWaitingToCancel = exchangableReservations.Item2;
+				firstQualifiedReservationOnWaitingToCancel = exchangableReservations.Item2;
 			
-				_reservationRepository.Update(firstReservationOnWaitingToCancel);
+				_reservationRepository.Update(firstQualifiedReservationOnWaitingToCancel);
 			}
 
 			_reservationRepository.Add(reservation);

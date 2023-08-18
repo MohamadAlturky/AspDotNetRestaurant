@@ -9,8 +9,9 @@ public class User
 	}
 	public long Id { get; set; }
 	public string HashedPassword { get; set; } = null!;
-	public virtual Customer? Customer { get; set; }
+	public string HiastMail { get; set; } = string.Empty;
 
+	public virtual Customer? Customer { get; set; }
 	public virtual ICollection<Role> Roles { get; set; }
 }
 

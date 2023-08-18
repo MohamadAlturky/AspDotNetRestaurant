@@ -1,6 +1,6 @@
 ﻿using Domain.Customers.ValueObjects;
 using Domain.Meals.ValueObjects;
-using Domain.Shared.Entities;
+using Domain.Pricing.Aggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedKernal.Entities;

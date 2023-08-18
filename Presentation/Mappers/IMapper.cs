@@ -1,7 +1,7 @@
 ﻿using Domain.Customers.Aggregate;
-using Domain.Meals.Aggregate;
-using Domain.Meals.Entities;
-using Domain.Shared.Entities;
+using Domain.MealEntries.Aggregate;
+using Domain.MealInformations.Aggregate;
+using Domain.Pricing.Aggregate;
 using Presentation.ApiModels.Customers;
 using Presentation.ApiModels.MealEntry;
 using Presentation.ApiModels.Meals;

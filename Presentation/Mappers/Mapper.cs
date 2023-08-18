@@ -1,7 +1,7 @@
 ﻿using Domain.Customers.Aggregate;
-using Domain.Meals.Aggregate;
-using Domain.Meals.Entities;
-using Domain.Shared.Entities;
+using Domain.MealEntries.Aggregate;
+using Domain.MealInformations.Aggregate;
+using Domain.Pricing.Aggregate;
 using Presentation.ApiModels.Customers;
 using Presentation.ApiModels.MealEntry;
 using Presentation.ApiModels.Meals;
@@ -75,8 +75,8 @@ public class Mapper : IMapper
 			Id = entry.Id,
 			AtDay = entry.AtDay,
 			CustomerCanCancel = entry.CustomerCanCancel,
-			Meal = entry.Meal is not null? this.Map(entry.Meal) : null,
-			MealId = entry.MealId,
+			Meal = entry.MealInformation is not null? this.Map(entry.MealInformation) : null,
+			MealId = entry.MealInformationId,
 			PreparedCount = entry.PreparedCount,
 			ReservationsCount = entry.ReservationsCount
 		};

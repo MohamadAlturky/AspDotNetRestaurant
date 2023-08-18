@@ -1,5 +1,5 @@
 ﻿using Application.IdentityChecker;
-using Application.Meals.UseCases.GetAutoCompleteMealName;
+using Application.MealEntries.UseCases.CancelMealEntry;
 using Application.Meals.UseCases.GetMealEntries;
 using Application.Meals.UseCases.GetMealEntriesByDate;
 using Application.Meals.UseCases.GetMealsByName;
@@ -94,6 +94,19 @@ public class MealsController : APIController
 	//	return Ok("ImageFile");
 	//}
 
+	[HttpDelete("DeleteMealEntry")]
+	[HasPermission(AuthorizationPermissions.CreateContent)]
+	public async Task<IActionResult> DeleteMealEntry(long mealEntryId)
+	{
+		var response = await _sender.Send(new CancelMealEntryCommand(mealEntryId));
+
+		if (response.IsFailure)
+		{
+			return BadRequest(Result.Failure(response.Error));
+		}
+
+		return Ok(Result.Success());
+	}
 
 
 	[HttpGet("GetAllMeals")]
@@ -216,26 +229,5 @@ public class MealsController : APIController
 		}
 	}
 
-	[HttpPost("AutoCompleteMealName")]
-	[HasPermission(AuthorizationPermissions.ReadSystemInfo)]
-	public async Task<IActionResult> AutoCompleteMealName([FromForm] AutoCompleteMealNameRequest request)
-	{
-		try
-		{
-			MealType mealType = Enum.Parse<MealType>(request.MealType);
-			
-			Result response = await _sender.Send(new GetAutoCompleteMealNameQuery(request.PartOfMealName,mealType));
-
-			if (response.IsFailure)
-			{
-				return BadRequest(Result.Failure(response.Error));
-			}
-
-			return Ok(response);
-		}
-		catch (Exception exception)
-		{
-			return BadRequest(Result.Failure(new Error("Model State", exception.Message)));
-		}
-	}
+	
 }

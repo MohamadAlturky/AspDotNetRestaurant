@@ -1,7 +1,8 @@
 ﻿using Domain.Customers.Aggregate;
-using Domain.Meals.Aggregate;
+using Domain.MealEntries.Aggregate;
 using Domain.Reservations.Aggregate;
 using Domain.Reservations.Repositories;
+using Domain.Reservations.Services;
 using Domain.Shared.Proxies;
 using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;
@@ -14,20 +15,22 @@ internal class CancelReservationCommandHandler : ICommandHandler<CancelReservati
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly IReservationRepository _reservationRepository;
 	private readonly CustomerRepositoryProxy _customerRepositoryProxy;
-	private readonly MealRepositoryProxy _mealRepositoryProxy;
+	private readonly MealEntryRepositoryProxy _mealRepositoryProxy;
 	private readonly PricingRepositoryProxy _pricingRepositoryProxy;
-
+	private readonly IReservationsService _reservationsService;
 	public CancelReservationCommandHandler(IUnitOfWork unitOfWork,
 		IReservationRepository reservationRepository,
 		CustomerRepositoryProxy customerRepositoryProxy,
-		MealRepositoryProxy mealRepositoryProxy,
-		PricingRepositoryProxy pricingRepositoryProxy)
+		MealEntryRepositoryProxy mealRepositoryProxy,
+		PricingRepositoryProxy pricingRepositoryProxy,
+		IReservationsService reservationsService)
 	{
 		_unitOfWork = unitOfWork;
 		_reservationRepository = reservationRepository;
 		_customerRepositoryProxy = customerRepositoryProxy;
 		_mealRepositoryProxy = mealRepositoryProxy;
 		_pricingRepositoryProxy = pricingRepositoryProxy;
+		_reservationsService = reservationsService;
 	}
 
 	public async Task<Result<string>> Handle(CancelReservationCommand request, CancellationToken cancellationToken)
@@ -61,13 +64,15 @@ internal class CancelReservationCommandHandler : ICommandHandler<CancelReservati
 
 			if (firstWaitingReservation is not null)
 			{
-				reservation.CancelAndGiveMealTo(entry,customer, firstWaitingReservation);
+				_reservationsService.CancelAndGiveMealTo(reservation, firstWaitingReservation);
+				//reservation.CancelAndGiveMealTo(entry, customer, firstWaitingReservation);
 				_reservationRepository.Update(reservation);
 				_reservationRepository.Update(firstWaitingReservation);
 			}
 			else
 			{
-				reservation.Cancel(entry, customer);
+				_reservationsService.Cancel(reservation);
+				//reservation.Cancel(entry, customer);
 				_reservationRepository.Update(reservation);
 			}
 

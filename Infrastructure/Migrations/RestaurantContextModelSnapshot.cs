@@ -88,7 +88,57 @@ namespace Infrastructure.Migrations
                     b.ToTable("Customer");
                 });
 
-            modelBuilder.Entity("Domain.Meals.Aggregate.Meal", b =>
+            modelBuilder.Entity("Domain.MealEntries.Aggregate.MealEntry", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("AtDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("CustomerCanCancel")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LastNumberInQueue")
+                        .HasColumnType("int");
+
+                    b.Property<long>("MealInformationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("PreparedCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReservationsCount")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AtDay");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("MealInformationId");
+
+                    b.ToTable("MealEntry");
+                });
+
+            modelBuilder.Entity("Domain.MealInformations.Aggregate.MealInformation", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -132,7 +182,49 @@ namespace Infrastructure.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("Meal");
+                    b.ToTable("Meal", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Pricing.Aggregate.PricingRecord", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerTypeValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MealTypeValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("MealTypeValue", "CustomerTypeValue")
+                        .IsUnique();
+
+                    b.ToTable("PricingRecord");
                 });
 
             modelBuilder.Entity("Domain.Reservations.Aggregate.Reservation", b =>
@@ -188,98 +280,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Reservation");
                 });
 
-            modelBuilder.Entity("Domain.Shared.Entities.MealEntry", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("AtDay")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("CustomerCanCancel")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LastNumberInQueue")
-                        .HasColumnType("int");
-
-                    b.Property<long>("MealId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("PreparedCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservationsCount")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AtDay");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("MealId");
-
-                    b.ToTable("MealEntry");
-                });
-
-            modelBuilder.Entity("Domain.Shared.Entities.PricingRecord", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CustomerTypeValue")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("MealTypeValue")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("MealTypeValue", "CustomerTypeValue")
-                        .IsUnique();
-
-                    b.ToTable("PricingRecord");
-                });
-
             modelBuilder.Entity("Infrastructure.Authentication.Models.Permission", b =>
                 {
                     b.Property<int>("Id")
@@ -310,7 +310,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "CreateContent"
+                            Name = "CreateSystemInformation"
                         },
                         new
                         {
@@ -320,7 +320,17 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            Name = "ReadSystemInfo"
+                            Name = "ReadSystemInformation"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "ConsumeReservations"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "EditBalances"
                         });
                 });
 
@@ -345,13 +355,23 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
+                            Id = 2,
+                            Name = "User"
+                        },
+                        new
+                        {
                             Id = 1,
                             Name = "Manager"
                         },
                         new
                         {
-                            Id = 2,
-                            Name = "User"
+                            Id = 4,
+                            Name = "Consumer"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Accountant"
                         });
                 });
 
@@ -373,11 +393,6 @@ namespace Infrastructure.Migrations
                         new
                         {
                             RoleId = 1,
-                            PermissionId = 1
-                        },
-                        new
-                        {
-                            RoleId = 1,
                             PermissionId = 2
                         },
                         new
@@ -388,12 +403,17 @@ namespace Infrastructure.Migrations
                         new
                         {
                             RoleId = 1,
-                            PermissionId = 4
+                            PermissionId = 5
                         },
                         new
                         {
-                            RoleId = 1,
-                            PermissionId = 5
+                            RoleId = 4,
+                            PermissionId = 6
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 7
                         },
                         new
                         {
@@ -413,6 +433,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("HashedPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HiastMail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -436,6 +460,44 @@ namespace Infrastructure.Migrations
                     b.ToTable("UserRole");
                 });
 
+            modelBuilder.Entity("Infrastructure.ForgetPasswordHandling.Models.ForgetPasswordEntry", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SerialNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ValidationToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ForgetPasswordEntry");
+                });
+
+            modelBuilder.Entity("Domain.MealEntries.Aggregate.MealEntry", b =>
+                {
+                    b.HasOne("Domain.MealInformations.Aggregate.MealInformation", "MealInformation")
+                        .WithMany("MealEntries")
+                        .HasForeignKey("MealInformationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MealInformation");
+                });
+
             modelBuilder.Entity("Domain.Reservations.Aggregate.Reservation", b =>
                 {
                     b.HasOne("Domain.Customers.Aggregate.Customer", "Customer")
@@ -444,7 +506,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Shared.Entities.MealEntry", "MealEntry")
+                    b.HasOne("Domain.MealEntries.Aggregate.MealEntry", "MealEntry")
                         .WithMany("Reservations")
                         .HasForeignKey("MealEntryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -453,17 +515,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("MealEntry");
-                });
-
-            modelBuilder.Entity("Domain.Shared.Entities.MealEntry", b =>
-                {
-                    b.HasOne("Domain.Meals.Aggregate.Meal", "Meal")
-                        .WithMany("MealEntries")
-                        .HasForeignKey("MealId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Meal");
                 });
 
             modelBuilder.Entity("Infrastructure.Authentication.Models.RolePermission", b =>
@@ -511,14 +562,14 @@ namespace Infrastructure.Migrations
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("Domain.Meals.Aggregate.Meal", b =>
-                {
-                    b.Navigation("MealEntries");
-                });
-
-            modelBuilder.Entity("Domain.Shared.Entities.MealEntry", b =>
+            modelBuilder.Entity("Domain.MealEntries.Aggregate.MealEntry", b =>
                 {
                     b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("Domain.MealInformations.Aggregate.MealInformation", b =>
+                {
+                    b.Navigation("MealEntries");
                 });
 #pragma warning restore 612, 618
         }

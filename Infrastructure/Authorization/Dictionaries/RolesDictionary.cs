@@ -15,4 +15,16 @@ public static class RolesDictionary
 		Id = 2,
 		Name = "User"
 	};
+
+	public static Role Accountant => new()
+	{
+		Id = 3,
+		Name = "Accountant"
+	};
+
+	public static Role Consumer => new()
+	{
+		Id = 4,
+		Name = "Consumer"
+	};
 }

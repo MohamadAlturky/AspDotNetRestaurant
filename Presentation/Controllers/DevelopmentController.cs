@@ -8,6 +8,7 @@ using SharedResources;
 using SharedResources.RecourcesKeys;
 using SharedResources.LocalizationProviders;
 using Domain.Shared.Utilities;
+using System.Net;
 
 namespace Presentation.Controllers;
 [Route("api/[controller]")]
@@ -21,8 +22,8 @@ public class DevelopmentController : APIController
 		_hashHandler = hashHandler;
 		_localizer = localizer;
 	}
-	//[HttpPost("SeedAdmin")]
-	//public async Task<IActionResult> SeedAdmin(string password)
+	//[HttpPost("SeedSuperUsers")]
+	//public async Task<IActionResult> SeedSuperUsers(string password)
 	//{
 	//	try
 	//	{
@@ -65,34 +66,34 @@ public class DevelopmentController : APIController
 
 
 	[HttpPost("SendEmail")]
-	public IActionResult SendEmail()
+	public async Task<IActionResult> SendEmail()
 	{
 		try
 		{
-			var fromAddress = new MailAddress("m799678@gmail.com");
-			var toAddress = new MailAddress("alaamayya222@gmail.com");
-			//const string fromPassword = "mmm123456789";
-			//const string subject = "Test email";
-			//const string body = "This is a test email.";
+			var fromAddress = new MailAddress("mohamad.alturky@hiast.edu.sy");
+			var toAddress = new MailAddress("mohammad.salama@hiast.edu.sy");
+			const string fromPassword = "/.,m0987";
+			const string subject = "Admitting your Superiority";
+			const string body = "This is turkey and I recognize you as King of SHABAKAT AND OS";
 
-			//var smtpClient = new SmtpClient
-			//{
-			//	Host = "smtp.gmail.com",
-			//	Port = 25,
-			//	EnableSsl = false,
-			//	DeliveryMethod = SmtpDeliveryMethod.Network,
-			//	UseDefaultCredentials = false,
-			//	Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-			//};
+			var smtpClient = new SmtpClient
+			{
+				Host = "mail.hiast.edu.sy",
+				Port = 25,
+				EnableSsl = false,
+				DeliveryMethod = SmtpDeliveryMethod.Network,
+				UseDefaultCredentials = false,
+				Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+			};
 
-			//using (var message = new MailMessage(fromAddress, toAddress)
-			//{
-			//	Subject = subject,
-			//	Body = body
-			//})
-			//{
-			//	smtpClient.Send(message);
-			//}
+			var message = new MailMessage(fromAddress, toAddress)
+			{
+				Subject = subject,
+				Body = body
+			};
+			
+			await smtpClient.SendMailAsync(message);
+			
 
 			//SmtpClient client = new SmtpClient();
 

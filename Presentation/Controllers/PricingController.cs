@@ -2,7 +2,7 @@
 using Application.Pricing.UseCases.Delete;
 using Application.Pricing.UseCases.GetAll;
 using Application.Pricing.UseCases.Update;
-using Domain.Shared.Entities;
+using Domain.Pricing.Aggregate;
 using Infrastructure.Authentication.Permissions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

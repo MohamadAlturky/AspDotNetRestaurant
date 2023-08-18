@@ -1,4 +1,6 @@
-﻿using Domain.Reservations.Aggregate;
+﻿using Domain.Customers.Aggregate;
+using Domain.MealEntries.Aggregate;
+using Domain.Reservations.Aggregate;
 using Domain.Reservations.Repositories;
 using Domain.Reservations.ValueObjects;
 using Infrastructure.DataAccess.DBContext;
@@ -34,6 +36,12 @@ public class ReservationRepository : IReservationRepository
 	public void Delete(Reservation Entity)
 	{
 		throw new NotImplementedException();
+		
+	}
+
+	public void DeleteAll(ICollection<Reservation> reservations)
+	{
+		_context.Set<Reservation>().RemoveRange(reservations);
 	}
 
 	public IEnumerable<Reservation> GetAll()
@@ -72,13 +80,14 @@ public class ReservationRepository : IReservationRepository
 		return _context.Set<Reservation>().Find(id);
 	}
 
-	public Reservation? GetFirstOnWaitingToCancel(long mealEntryId)
+	public Reservation? GetFirstOnWaitingToCancelWhereHisBalanceIsEnough(long mealEntryId)
 	{
 		return _context.Set<Reservation>()
 		.Where(reservation => reservation.MealEntryId == mealEntryId)
 		.Where(reservation => reservation.ReservationStatus ==
 				OrderStatus.OnTheCanceledListButNotCanceledYet.ToString())
 		.Include(reservation => reservation.Customer)
+		.Where(reservation => reservation.Customer.Balance > reservation.Price)
 		.OrderBy(reservation => reservation.NumberInQueue)
 		.FirstOrDefault();
 	}
@@ -108,6 +117,15 @@ public class ReservationRepository : IReservationRepository
 	public IEnumerable<Reservation> GetPage(int pageSize, int pageNumber)
 	{
 		throw new NotImplementedException();
+	}
+
+	public Reservation? GetReservationOnMealEntryBySerialNumber(long mealEntryId, int serialNumber)
+	{
+		return _context.Set<Reservation>()
+			.Where(reservation => reservation.MealEntryId == mealEntryId)
+			.Include(reservation => reservation.Customer)
+			.Where(reservation => reservation.Customer.SerialNumber == serialNumber)
+			.FirstOrDefault();
 	}
 
 	//public Reservation? GetTheFirstOfWaitingReservationsOnEntry(long id)

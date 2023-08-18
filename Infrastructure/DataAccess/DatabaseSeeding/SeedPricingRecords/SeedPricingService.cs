@@ -1,6 +1,6 @@
 ﻿using Domain.Customers.ValueObjects;
 using Domain.Meals.ValueObjects;
-using Domain.Shared.Entities;
+using Domain.Pricing.Aggregate;
 using Infrastructure.DataAccess.DBContext;
 using SharedKernal.Utilities.Result;
 

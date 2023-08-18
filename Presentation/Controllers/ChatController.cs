@@ -1,6 +1,9 @@
 ﻿using Application.IdentityChecker;
 using Infrastructure.Authentication.Permissions;
 using Infrastructure.Notification;
+using Infrastructure.Notification.Hubs;
+using Infrastructure.Notification.Model;
+using Infrastructure.Notification.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -15,12 +18,12 @@ namespace Presentation.Controllers;
 [ApiController]
 public class ChatController : APIController
 {
-	private readonly IHubContext<NotificationsHub> _notificationsHub;
+	private readonly INotificationService _notificationService;
 
-	public ChatController(ISender sender, IMapper mapper, IHubContext<NotificationsHub> notificationsHub)
+	public ChatController(ISender sender, IMapper mapper, INotificationService notificationService)
 		: base(sender, mapper)
 	{
-		_notificationsHub = notificationsHub;
+		_notificationService = notificationService;
 	}
 
 	[HttpPost("SendToAll")]
@@ -29,7 +32,12 @@ public class ChatController : APIController
 	{
 		try
 		{
-			await _notificationsHub.Clients.All.SendAsync("RecieveMessage", model.Title + model.Content);
+			await _notificationService.SendToAllAsync(new NotificationMessage()
+			{
+				MessageContent=model.Content,
+				MessageSubject=model.Title,
+				SentAt=DateTime.UtcNow
+			});
 			return Ok();
 		}
 		catch (Exception exception)

@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Authentication.Models;
 using Infrastructure.Authentication.PasswordHashing;
 using Infrastructure.DataAccess.DBContext;
+using Microsoft.EntityFrameworkCore;
+using SharedKernal.Utilities.Result;
 
 namespace Infrastructure.DataAccess.UserPersistence;
 
@@ -50,8 +52,34 @@ public class UserPersistenceService : IUserPersistenceService
 		await _context.SaveChangesAsync();
 	}
 
+	public Result CheckPasswordValidity(int serialNumber, string password)
+	{
+		string hashedPassword = _hashHandler.GetHash(password);
+		User? user = _context.Set<User>()
+			.Include(user=>user.Customer)
+			.Where(user => user.Customer.SerialNumber == serialNumber)
+			.FirstOrDefault();
+		if(user is null)
+		{
+			return Result.Failure(new SharedKernal.Utilities.Errors.Error("", "if(user is null)"));
+		}
+		if(hashedPassword != user.HashedPassword)
+		{
+			return Result.Failure(new SharedKernal.Utilities.Errors.Error("", "if(hashedPassword != user.HashedPassword)"));
+		}
+		return Result.Success();
+	}
+
 	public void CreateUser(User user)
 	{
 		_context.Set<User>().Add(user);
+	}
+
+	public User? GetUser(int serialNumber)
+	{
+		return _context.Set<User>()
+			.Include(user=>user.Customer)
+			.Where(user => user.Customer.SerialNumber == serialNumber)
+			.FirstOrDefault();
 	}
 }

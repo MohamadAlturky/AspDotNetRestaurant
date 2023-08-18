@@ -3,6 +3,7 @@ using Domain.Customers.Exceptions;
 using Domain.Customers.Repositories;
 using Infrastructure.DataAccess.DBContext;
 using Microsoft.EntityFrameworkCore;
+using SharedKernal.Entities;
 
 namespace Infrastructure.CustomersPersistance.Repository;
 public class CustomerRepository : ICustomerRepository
@@ -75,5 +76,10 @@ public class CustomerRepository : ICustomerRepository
 	public void Update(Customer Entity)
 	{
 		_context.Set<Customer>().Update(Entity);
+	}
+
+	public void UpdateAll(List<Customer> customers)
+	{
+		_context.Set<Customer>().UpdateRange(customers);
 	}
 }

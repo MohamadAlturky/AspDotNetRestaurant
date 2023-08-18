@@ -13,7 +13,8 @@
 
   <ItemGroup>
     <Folder Include="Customers\DomainEvents\" />
-    <Folder Include="Meals\DomainEvents\" />
+    <Folder Include="MealEntries\DomainEvents\" />
+    <Folder Include="MealEntries\Entities\" />
     <Folder Include="Reservations\Entities\" />
   </ItemGroup>
 
