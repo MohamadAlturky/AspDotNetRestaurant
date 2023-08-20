@@ -1,4 +1,5 @@
 ﻿using Domain.Reservations.Aggregate;
+using Domain.Reservations.ReadModels;
 using SharedKernal.Repositories;
 
 namespace Domain.Reservations.Repositories;
@@ -23,4 +24,5 @@ public interface IReservationRepository : IRepository<Reservation>
 	Reservation? GetFirstWaitingReservationsOnEntry(long entryId);
 	void DeleteAll(ICollection<Reservation> reservations);
 	Reservation? GetReservationOnMealEntryBySerialNumber(long mealEntryId, int serialNumber);
+	List<ReservationsCustomerTypeReadModel> GetReservationsGroupedByCustomersTypeOnMeal(long mealEntryId);
 }

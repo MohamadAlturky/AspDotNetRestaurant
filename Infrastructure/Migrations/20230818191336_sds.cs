@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
-{
+namespace Infrastructure.Migrations;
+
     public partial class sds : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -398,4 +398,3 @@ namespace Infrastructure.Migrations
                 name: "Customer");
         }
     }
-}

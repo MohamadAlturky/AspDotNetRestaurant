@@ -62,7 +62,7 @@ public class CustomersController : APIController
 
 
 	[HttpGet("GetAllCustomers")]
-	[HasPermission(AuthorizationPermissions.ReadSystemInfo)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetAllCustomers()
 	{
 		Result<List<Customer>> response = await _sender.Send(new GetAllCustomersQuery());
@@ -76,7 +76,7 @@ public class CustomersController : APIController
 	}
 
 	[HttpGet("GetPaginatedCustomers")]
-	[HasPermission(AuthorizationPermissions.ReadSystemInfo)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetPaginatedCustomers(int pageNumber, int pageSize)
 	{
 		Result<List<Customer>> response = await _sender.Send(new GetCustomersPageQuery(pageSize, pageNumber));
@@ -90,7 +90,7 @@ public class CustomersController : APIController
 	}
 
 	[HttpGet("GetCustomerBySerialNumber")]
-	[HasPermission(AuthorizationPermissions.ReadSystemInfo)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetCustomerBySerialNumber(int serialNumber)
 	{
 		Result<Customer> response = await _sender.Send(new GetCustomerBySerialNumberQuery(serialNumber));
@@ -104,7 +104,7 @@ public class CustomersController : APIController
 	}
 
 	[HttpGet("GetSumOfCustomersBalances")]
-	[HasPermission(AuthorizationPermissions.ReadSystemInfo)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetSumOfCustomersBalances()
 	{
 		Result<long> response = await _sender.Send(new GetSumOfCustomersBalancesQuery());
@@ -118,7 +118,7 @@ public class CustomersController : APIController
 	}
 
 	[HttpPut("IncreaseCustomerBalance")]
-	[HasPermission(AuthorizationPermissions.CreateContent)]
+	[HasPermission(AuthorizationPermissions.EditBalances)]
 	public async Task<IActionResult> IncreaseCustomerBalance([FromForm] IncreaseBalanceRequest balanceRequest)
 	{
 		Result response = await _sender.Send(new IncreaseCustomerBalanceCommand(balanceRequest.serialNumber, balanceRequest.valueToAdd));
@@ -132,7 +132,7 @@ public class CustomersController : APIController
 	}
 
 	[HttpPut("DecreaseCustomerBalance")]
-	[HasPermission(AuthorizationPermissions.CreateContent)]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
 	public async Task<IActionResult> DecreaseCustomerBalance(int serialNumber, int valueToRemove)
 	{
 		Result response = await _sender.Send(new DecreaseCustomerBalanceCommand(serialNumber, valueToRemove));

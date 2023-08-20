@@ -27,7 +27,7 @@ public class ChatController : APIController
 	}
 
 	[HttpPost("SendToAll")]
-	[HasPermission(AuthorizationPermissions.CreateContent)]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
 	public async Task<IActionResult> SendToAll([FromForm] BroadCastRequest model)
 	{
 		try

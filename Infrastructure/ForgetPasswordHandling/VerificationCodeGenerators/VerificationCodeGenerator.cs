@@ -10,7 +10,7 @@ internal class VerificationCodeGenerator : IVerificationCodeGenerator
 	public string GenerateVerificationCode()
 	{
 		string code = "";
-		for(int index = 0; index < 10; index++)
+		for(int index = 0; index < 6; index++)
 		{
 			code += _random.Next(1,9).ToString();
 		}

@@ -25,6 +25,7 @@ public static class UserFactory
 				Notes = model.Notes,
 				IsActive=true
 			},
+			HiastMail = model.HiastMail,
 			Roles = new List<Role>()
 			{
 				new Role()

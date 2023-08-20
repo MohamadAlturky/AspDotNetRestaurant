@@ -89,10 +89,10 @@ public class AuthenticationController : APIController
 	[HasPermission(AuthorizationPermissions.RegisterCustomer)]
 	public async Task<IActionResult> Register([FromForm] RegistrationModel model)
 	{
-		if (!ModelState.IsValid)
-		{
-			return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
-		}
+		//if (!ModelState.IsValid)
+		//{
+		//	return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
+		//}
 
 		try
 		{
@@ -100,7 +100,7 @@ public class AuthenticationController : APIController
 
 			if (response.IsFailure)
 			{
-				return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
+				return BadRequest(Result.Failure(response.Error));
 			}
 
 			return Ok(response);
@@ -113,12 +113,8 @@ public class AuthenticationController : APIController
 
 
 	[HttpPost("ForgetPassword")]
-	public async Task<IActionResult> ForgetPassword([FromForm] int serialNumber)
+	public async Task<IActionResult> ForgetPassword([FromBody] int serialNumber)
 	{
-		if (!ModelState.IsValid)
-		{
-			return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
-		}
 
 		try
 		{
@@ -126,8 +122,30 @@ public class AuthenticationController : APIController
 
 			if (response.IsFailure)
 			{
-				return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
+				return BadRequest(Result.Failure(response.Error));
 			}
+
+			return Ok(response);
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("Model State", exception.Message)));
+		}
+	}
+
+	[HttpPost("VerifyCode")]
+	public async Task<IActionResult> VerifyCode([FromForm] VerifyCodeRequest verifyCode)
+	{
+		try
+		{
+			Result response = await _forgetPasswordService.VerifyCode(verifyCode.EntryId, verifyCode.Code);
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(response.Error));
+			}
+
+			_userPersistenceService.UpdateUserPassword(verifyCode.SerialNumber, verifyCode.Password);
 
 			return Ok(response);
 		}

@@ -45,7 +45,7 @@ public class MealsController : APIController
 
 
 	[HttpPost("Create")]
-	[HasPermission(AuthorizationPermissions.CreateContent)]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
 	public async Task<IActionResult> Create([FromForm] CreateMealRequest meal)
 	{
 		try
@@ -95,7 +95,7 @@ public class MealsController : APIController
 	//}
 
 	[HttpDelete("DeleteMealEntry")]
-	[HasPermission(AuthorizationPermissions.CreateContent)]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
 	public async Task<IActionResult> DeleteMealEntry(long mealEntryId)
 	{
 		var response = await _sender.Send(new CancelMealEntryCommand(mealEntryId));
@@ -110,7 +110,7 @@ public class MealsController : APIController
 
 
 	[HttpGet("GetAllMeals")]
-	[HasPermission(AuthorizationPermissions.ReadContent)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetAllMeals()
 	{
 		var response = await _sender.Send(new GetMealsQuery());
@@ -124,7 +124,7 @@ public class MealsController : APIController
 	}
 
 	[HttpGet("GetMealsByNameAndType/{mealName}/{mealType}")]
-	[HasPermission(AuthorizationPermissions.ReadSystemInfo)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetMealsByNameAndType(string mealName,string mealType)
 	{
 		MealType type = Enum.Parse<MealType>(mealType);
@@ -139,7 +139,7 @@ public class MealsController : APIController
 	}
 
 	[HttpGet("GetMealEntries")]
-	[HasPermission(AuthorizationPermissions.ReadContent)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetMealEntries(long Id)
 	{
 		var response = await _sender.Send(new GetMealEntriesQuery(Id));
@@ -153,7 +153,7 @@ public class MealsController : APIController
 	}
 
 	[HttpGet("GetMealEntriesByDate")]
-	[HasPermission(AuthorizationPermissions.ReadContent)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetMealEntriesByDate(string date)
 	{
 
@@ -208,7 +208,7 @@ public class MealsController : APIController
 
 
 	[HttpPost("PrepareMeal")]
-	[HasPermission(AuthorizationPermissions.CreateContent)]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
 	public async Task<IActionResult> PrepareMeal([FromForm] PrepareRequest request)
 	{
 		try

@@ -1,6 +1,8 @@
 ﻿using Domain.Customers.Aggregate;
+using Domain.Customers.ValueObjects;
 using Domain.MealEntries.Aggregate;
 using Domain.Reservations.Aggregate;
+using Domain.Reservations.ReadModels;
 using Domain.Reservations.Repositories;
 using Domain.Reservations.ValueObjects;
 using Infrastructure.DataAccess.DBContext;
@@ -126,6 +128,23 @@ public class ReservationRepository : IReservationRepository
 			.Include(reservation => reservation.Customer)
 			.Where(reservation => reservation.Customer.SerialNumber == serialNumber)
 			.FirstOrDefault();
+	}
+
+	public List<ReservationsCustomerTypeReadModel> GetReservationsGroupedByCustomersTypeOnMeal(long mealEntryId)
+	{
+		var answer = _context.Set<Reservation>()
+			.Where(reservation => reservation.MealEntryId == mealEntryId)
+			.Include(reservation => reservation.Customer)
+			.AsEnumerable()
+			.GroupBy(reservation => reservation.Customer.Category)
+			.Select(group => new ReservationsCustomerTypeReadModel()
+			{
+				CustomerType = group.Key,
+				NumberOfCustomers = group.Count()
+			})
+			.ToList();
+
+		return answer;
 	}
 
 	//public Reservation? GetTheFirstOfWaitingReservationsOnEntry(long id)

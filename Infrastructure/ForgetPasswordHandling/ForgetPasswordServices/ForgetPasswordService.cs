@@ -6,6 +6,7 @@ using Infrastructure.ForgetPasswordHandling.VerificationCodeGenerators;
 using Infrastructure.Mail.Abstraction;
 using Infrastructure.Mail.Configuration;
 using Infrastructure.Mail.Model;
+using Microsoft.AspNetCore.Mvc;
 using SharedKernal.Repositories;
 using SharedKernal.Utilities.Result;
 
@@ -31,7 +32,7 @@ internal class ForgetPasswordService : IForgetPasswordService
 		_verificationCodeGenerator = verificationCodeGenerator;
 		_forgetPasswordRepository = forgetPasswordRepository;
 	}
-
+	
 	public async Task<Result<long>> SendCodeVIAMailAsync(int serialNumber)
 	{
 		try
@@ -45,7 +46,7 @@ internal class ForgetPasswordService : IForgetPasswordService
 			}
 
 
-			ForgetPasswordEntry entry = new Models.ForgetPasswordEntry()
+			ForgetPasswordEntry entry = new ForgetPasswordEntry()
 			{
 				Email = user.HiastMail,
 				SerialNumber = serialNumber,

@@ -1,4 +1,5 @@
 ﻿using Application.IdentityChecker;
+using Application.MealEntries.UseCases.GetStatisticAboutReservationsCustomersType;
 using Application.Reservations.UseCases.Cancel;
 using Application.Reservations.UseCases.ConsumeReservation;
 using Application.Reservations.UseCases.Create;
@@ -87,7 +88,7 @@ public class ReservationsController : APIController
 	}
 
 	[HttpGet("GetReservationsByDate")]
-	[HasPermission(AuthorizationPermissions.ReadSystemInfo)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetReservationsByDate(string date)
 	{
 		try
@@ -110,7 +111,7 @@ public class ReservationsController : APIController
 	}
 
 	[HttpGet("GetReservationsBetweenTwoDates")]
-	[HasPermission(AuthorizationPermissions.ReadSystemInfo)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetReservationsBetweenTwoDates(string startDate, string endDate)
 	{
 		try
@@ -142,7 +143,7 @@ public class ReservationsController : APIController
 
 
 	[HttpGet("GetReservationsByCustomerSerialNumber")]
-	[HasPermission(AuthorizationPermissions.ReadSystemInfo)]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetReservationsByCustomerSerialNumber(int serialNumber)
 	{
 		try
@@ -154,6 +155,29 @@ public class ReservationsController : APIController
 				return BadRequest(Result.Failure(response.Error));
 			}
 			return Ok(response.Value);
+
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("", exception.Message)));
+		}
+	}
+
+
+
+	[HttpGet("GetStatisticAboutReservationsCustomersType/{mealEntryId}")]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
+	public async Task<IActionResult> GetStatisticAboutReservationsCustomersType(long mealEntryId)
+	{
+		try
+		{
+			var response = await _sender.Send(new GetStatisticAboutReservationsCustomersTypeQuery(mealEntryId));
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(response.Error));
+			}
+			return Ok(response);
 
 		}
 		catch (Exception exception)

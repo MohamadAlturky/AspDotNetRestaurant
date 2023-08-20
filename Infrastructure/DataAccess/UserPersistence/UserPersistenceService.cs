@@ -56,14 +56,14 @@ public class UserPersistenceService : IUserPersistenceService
 	{
 		string hashedPassword = _hashHandler.GetHash(password);
 		User? user = _context.Set<User>()
-			.Include(user=>user.Customer)
+			.Include(user => user.Customer)
 			.Where(user => user.Customer.SerialNumber == serialNumber)
 			.FirstOrDefault();
-		if(user is null)
+		if (user is null)
 		{
 			return Result.Failure(new SharedKernal.Utilities.Errors.Error("", "if(user is null)"));
 		}
-		if(hashedPassword != user.HashedPassword)
+		if (hashedPassword != user.HashedPassword)
 		{
 			return Result.Failure(new SharedKernal.Utilities.Errors.Error("", "if(hashedPassword != user.HashedPassword)"));
 		}
@@ -78,8 +78,24 @@ public class UserPersistenceService : IUserPersistenceService
 	public User? GetUser(int serialNumber)
 	{
 		return _context.Set<User>()
-			.Include(user=>user.Customer)
+			.Include(user => user.Customer)
 			.Where(user => user.Customer.SerialNumber == serialNumber)
 			.FirstOrDefault();
+	}
+
+	public void UpdateUserPassword(int serialNumber, string password)
+	{
+		User? user = _context.Set<User>()
+			.Where(user => user.Customer.SerialNumber == serialNumber)
+			.FirstOrDefault();
+
+		if (user is null)
+		{
+			throw new Exception("if(user is null)");
+		}
+		user.HashedPassword = _hashHandler.GetHash(password);
+
+		_context.Set<User>().Update(user);
+		_context.SaveChanges();
 	}
 }

@@ -29,7 +29,7 @@ public class PricingController : APIController
 
 
 	[HttpPost("Create")]
-	[HasPermission(AuthorizationPermissions.CreateContent)]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
 	public async Task<IActionResult> Create([FromBody] PricingRecordDTO recordDTO)
 	{
 		try
@@ -65,7 +65,7 @@ public class PricingController : APIController
 	}
 
 	[HttpPut("UpdateRecordValue")]
-	[HasPermission(AuthorizationPermissions.CreateContent)]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
 	public async Task<IActionResult> UpdateRecordValue([FromForm] EditPricingRecordRequest information)
 	{
 		Result response = await _sender.Send(new UpdatePricingRecordCommand(
@@ -83,7 +83,7 @@ public class PricingController : APIController
 
 
 	[HttpDelete("DeleteRecord")]
-	[HasPermission(AuthorizationPermissions.CreateContent)]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
 	public async Task<IActionResult> DeleteRecord([FromBody] long id)
 	{
 		Result response = await _sender.Send(new DeletePricingRecordCommand(id));

@@ -9,4 +9,6 @@ public interface IUserPersistenceService
 	Task ChangePassword(long userId,string oldPassword,string newPassword);
 	Result CheckPasswordValidity(int serialNumber, string password);
 	User? GetUser(int serialNumber);
+
+	void UpdateUserPassword(int serialNumber,string password);
 }
