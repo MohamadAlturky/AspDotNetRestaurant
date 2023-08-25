@@ -1,4 +1,4 @@
-﻿using SharedResources.LocalizationBuilders;
+﻿using Localization.LocalizationBuilders;
 
 namespace Presentation.DataBaseSeedingExtension;
 

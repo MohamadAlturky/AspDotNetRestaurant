@@ -45,26 +45,36 @@ internal class ForgetPasswordService : IForgetPasswordService
 				throw new Exception("if(user is null)");
 			}
 
+			ForgetPasswordEntry? entry = _userPersistenceService.GetForgetPasswordEntryOnThisDay(user.Id);
 
-			ForgetPasswordEntry entry = new ForgetPasswordEntry()
+			if(entry is null)
 			{
-				Email = user.HiastMail,
-				SerialNumber = serialNumber,
-				ValidationToken = code,
-				UserId = user.Id
-			};
-			_forgetPasswordRepository.SaveInforamtion(entry);
+				entry = new ForgetPasswordEntry()
+				{
+					Email = user.HiastMail,
+					SerialNumber = serialNumber,
+					ValidationToken = code,
+					UserId = user.Id,
+					AtDay=DateTime.Now
+				};
+				_forgetPasswordRepository.SaveInforamtion(entry);
+
+				await _unitOfWork.SaveChangesAsync();
+
+				await _emailSender.SendEmailAsync(new EmailMessage()
+				{
+					Content = code,
+					Subject = "ForgetPassword"
+
+				}, new MailAccount()
+				{
+					Email = user.HiastMail
+				});
+
+			}
+
+
 			await _unitOfWork.SaveChangesAsync();
-
-			await _emailSender.SendEmailAsync(new EmailMessage()
-			{
-				Content = code,
-				Subject = "ForgetPassword"
-
-			}, new MailAccount()
-			{
-				Email = user.HiastMail
-			});
 
 			return Result.Success(entry.Id);
 		}

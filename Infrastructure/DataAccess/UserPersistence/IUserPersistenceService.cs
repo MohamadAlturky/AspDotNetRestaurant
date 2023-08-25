@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Authentication.Models;
+using Infrastructure.ForgetPasswordHandling.Models;
 using SharedKernal.Utilities.Result;
 
 namespace Infrastructure.DataAccess.UserPersistence;
@@ -11,4 +12,5 @@ public interface IUserPersistenceService
 	User? GetUser(int serialNumber);
 
 	void UpdateUserPassword(int serialNumber,string password);
+	ForgetPasswordEntry? GetForgetPasswordEntryOnThisDay(long id);
 }

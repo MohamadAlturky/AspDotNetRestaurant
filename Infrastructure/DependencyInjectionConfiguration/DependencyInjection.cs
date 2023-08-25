@@ -1,4 +1,5 @@
 ﻿using Domain.Customers.Repositories;
+using Domain.Localization;
 using Domain.MealInformations.Repositories;
 using Domain.Meals.Repositories;
 using Domain.Reservations.Repositories;
@@ -12,6 +13,7 @@ using Infrastructure.DataAccess.MealsInformationPersistance;
 using Infrastructure.DataAccess.PermissionsService;
 using Infrastructure.DataAccess.UnitOfWork;
 using Infrastructure.DataAccess.UserPersistence;
+using Infrastructure.DomainLocalization;
 using Infrastructure.ForgetPasswordHandling.ForgetPasswordServices;
 using Infrastructure.ForgetPasswordHandling.Repository;
 using Infrastructure.ForgetPasswordHandling.VerificationCodeGenerators;
@@ -22,6 +24,7 @@ using Infrastructure.Notification;
 using Infrastructure.Notification.Services;
 using Infrastructure.PricingRecordsPersistance.Repository;
 using Infrastructure.ReservationsPersistence.Repository;
+using Localization.LocalizationBuilders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernal.Repositories;
@@ -51,5 +54,9 @@ public static class DependencyInjection
 		services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
 		services.AddScoped<IVerificationCodeGenerator, VerificationCodeGenerator>();
 		services.AddScoped<IForgetPasswordRepository, ForgetPasswordRepository>();
+		services.AddScoped<IDomainLocalizer, DomainLocalizer>();
+
+		services.AddScoped(typeof(LocalizationBuilder));
+
 	}
 }

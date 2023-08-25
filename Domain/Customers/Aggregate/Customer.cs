@@ -1,4 +1,5 @@
-﻿using Domain.Customers.ValueObjects;
+﻿using Domain.Customers.Entities;
+using Domain.Customers.ValueObjects;
 using Domain.Reservations.Aggregate;
 using SharedKernal.Entities;
 
@@ -22,6 +23,8 @@ public class Customer : AggregateRoot
 	public string BelongsToDepartment { get => _belongsToDepartment.ToString(); set => _belongsToDepartment = Enum.Parse<Department>(value); }
 	public string Notes { get => _notes.Value; set => _notes = new Note(value); }
 	public ICollection<Reservation> Reservations { get; set; } = new HashSet<Reservation>();
+	public ICollection<Feedback> Feedbacks { get; set; } = new HashSet<Feedback>();
+	public ICollection<AccountTransaction> AccountTransactions { get; set; } = new HashSet<AccountTransaction>();
 
 
 	public bool IsRegular { get; set; }
@@ -36,11 +39,29 @@ public class Customer : AggregateRoot
 	public void DecreaseBalance(int value)
 	{
 		int newBalance = _balance.Value - value;
+		
+		AccountTransactions.Add(new AccountTransaction(0)
+		{
+			CustomerId=this.Id,
+			Type=TransactionType.Decrease.ToString(),
+			Value=value,
+			CreatedAt=DateTime.Now
+		});
+		
 		_balance = new Balance(newBalance);
 	}
 	public void IncreaseBalance(int value)
 	{
 		int newBalance = _balance.Value + value;
+
+		AccountTransactions.Add(new AccountTransaction(0)
+		{
+			CustomerId = this.Id,
+			Type = TransactionType.Increase.ToString(),
+			Value = value,
+			CreatedAt = DateTime.Now
+		});
+
 		_balance = new Balance(newBalance);
 	}
 }

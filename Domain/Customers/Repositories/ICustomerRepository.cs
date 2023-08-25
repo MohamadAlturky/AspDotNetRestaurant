@@ -1,4 +1,6 @@
 ﻿using Domain.Customers.Aggregate;
+using Domain.Customers.Entities;
+using Domain.Customers.ReadModels;
 using SharedKernal.Repositories;
 
 namespace Domain.Customers.Repositories;
@@ -17,4 +19,6 @@ public interface ICustomerRepository : IRepository<Customer>
 	Customer? GetBySerialNumber(int serialNumber);
 	long CalculateSumOfBalances();
 	void UpdateAll(List<Customer> customers);
+	void AddAccountTransaction(AccountTransaction accountTransaction);
+	AccountTransactionsReadModel? GetAccountTransactionsPage(int serialNumber, int pageNumber);
 }

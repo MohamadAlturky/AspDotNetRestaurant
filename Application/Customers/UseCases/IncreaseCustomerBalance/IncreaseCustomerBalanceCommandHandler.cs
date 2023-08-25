@@ -38,6 +38,7 @@ internal class IncreaseCustomerBalanceCommandHandler : ICommandHandler<IncreaseC
 
 			customer.IncreaseBalance(request.valueToAddToTheBalance);
 
+			_customerRepository.AddAccountTransaction(customer.AccountTransactions.First());
 			_customerRepository.Update(customer);
 
 			await _unitOfWork.SaveChangesAsync();

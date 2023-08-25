@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using Presentation.DataBaseSeedingExtension;
 using Presentation.DependencyInjectionConfiguration;
 using Serilog;
-using SharedResources.DependencyInjectionConfiguration;
+using Localization.DependencyInjectionConfiguration;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +18,7 @@ builder.Services.Configure<IISServerOptions>(options =>
 	options.MaxRequestBodySize = int.MaxValue;
 });
 
+builder.Services.ConfigureSystemOptions();
 builder.Services.AddInfrastructure();
 builder.Services.AddPresentation();
 builder.Services.AddApplication();

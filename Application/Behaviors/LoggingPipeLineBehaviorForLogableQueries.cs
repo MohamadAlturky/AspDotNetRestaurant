@@ -6,7 +6,7 @@ using SharedKernal.CQRS.LogableQuery;
 using SharedKernal.Utilities.Result;
 
 namespace Application.Behaviors;
-public class LogableQueryLoggingPipeLineBehavior<TRequest, TResponse>
+public class LoggingPipeLineBehaviorForLogableQueries<TRequest, TResponse>
 	: IPipelineBehavior<TRequest, TResponse>
 	where TRequest : ILogableQuery<TResponse>
 	where TResponse : Result
@@ -14,7 +14,7 @@ public class LogableQueryLoggingPipeLineBehavior<TRequest, TResponse>
 	private readonly IQueryLogger<TRequest> _queryLogger;
 	private readonly PipeLineSettings _settings;
 
-	public LogableQueryLoggingPipeLineBehavior(IQueryLogger<TRequest> queryLogger, IOptions<PipeLineSettings> options)
+	public LoggingPipeLineBehaviorForLogableQueries(IQueryLogger<TRequest> queryLogger, IOptions<PipeLineSettings> options)
 	{
 		_queryLogger = queryLogger;
 		_settings = options.Value;

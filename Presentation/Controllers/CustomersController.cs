@@ -1,6 +1,8 @@
 ﻿using Application.Customers.UseCases.DecreaseCustomerBalance;
+using Application.Customers.UseCases.GetAccountTransactions;
 using Application.Customers.UseCases.GetAll;
 using Application.Customers.UseCases.GetSumOfCustomersBalances;
+using Application.IdentityChecker;
 using Application.UseCases.Customers.GetByFilter;
 using Application.UseCases.Customers.GetPage;
 using Application.UseCases.Customers.IncreaseCustomerBalance;
@@ -22,10 +24,11 @@ namespace Presentation.Controllers;
 public class CustomersController : APIController
 {
 	private readonly ILogger<CustomersController> _logger;
-
-	public CustomersController(ISender sender, IMapper mapper, ILogger<CustomersController> logger) : base(sender, mapper)
+	private readonly IExecutorIdentityProvider _executorIdentityProvider;
+	public CustomersController(IExecutorIdentityProvider executorIdentityProvider,ISender sender, IMapper mapper, ILogger<CustomersController> logger) : base(sender, mapper)
 	{
 		_logger = logger;
+		_executorIdentityProvider =executorIdentityProvider;
 	}
 
 	//[HttpPost("Create")]
@@ -136,6 +139,22 @@ public class CustomersController : APIController
 	public async Task<IActionResult> DecreaseCustomerBalance(int serialNumber, int valueToRemove)
 	{
 		Result response = await _sender.Send(new DecreaseCustomerBalanceCommand(serialNumber, valueToRemove));
+
+		if (response.IsFailure)
+		{
+			return BadRequest(Result.Failure(response.Error));
+		}
+
+		return Ok(response);
+	}
+
+	[HttpGet("AccountTransactionsPage/{pageNumber}")]
+	[HasPermission(AuthorizationPermissions.ReadContent)]
+	public async Task<IActionResult> GetAccountTransactionsPage(int pageNumber)
+	{
+		int serialNumber = int.Parse(_executorIdentityProvider.GetExecutorSerialNumber());
+		Result<Domain.Customers.ReadModels.AccountTransactionsReadModel> response = await _sender.Send(
+			new GetAccountTransactionsQuery(serialNumber, pageNumber));
 
 		if (response.IsFailure)
 		{

@@ -1,5 +1,4 @@
-﻿using SharedResources.LocalizationProviders;
-using SharedResources.RecourcesKeys;
+﻿using Domain.Localization;
 
 namespace Domain.Reservations.Exceptions;
 public class NegativePriceException : Exception

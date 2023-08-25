@@ -3,6 +3,7 @@ using Application.MealEntries.UseCases.CancelMealEntry;
 using Application.Meals.UseCases.GetMealEntries;
 using Application.Meals.UseCases.GetMealEntriesByDate;
 using Application.Meals.UseCases.GetMealsByName;
+using Application.Meals.UseCases.GetMealsSchedule;
 using Application.Meals.UseCases.GetWeeklyMeals;
 using Application.Meals.UseCases.PrepareNewMeal;
 using Application.UseCases.Meals.Create;
@@ -177,6 +178,31 @@ public class MealsController : APIController
 	}
 
 
+	[HttpGet("GetMealEntriesByDateForConsume")]
+	[HasPermission(AuthorizationPermissions.ConsumeReservations)]
+	public async Task<IActionResult> GetMealEntriesByDateForConsume(string date)
+	{
+
+		try
+		{
+			DateOnly dateFilter = DateOnly.Parse(date);
+
+			var response = await _sender.Send(new GetMealEntriesByDateQuery(dateFilter));
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(response.Error));
+			}
+			return Ok(Result.Success(response.Value.Select(entry => _mapper.Map(entry))));
+
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("", exception.Message)));
+		}
+	}
+
+
 	[HttpGet("GetWeeklyMeals")]
 	[HasPermission(AuthorizationPermissions.ReadContent)]
 	public async Task<IActionResult> GetWeeklyMeals(int WeekNumber)
@@ -204,7 +230,29 @@ public class MealsController : APIController
 		}
 	}
 
+	[HttpGet("GetMealsSchedule")]
+	public async Task<IActionResult> GetMealsSchedule(int WeekNumber)
+	{
+		try
+		{
+			DateTime target = DateTime.Now.AddDays(7 * WeekNumber);
 
+			DateOnly dateFilter = new DateOnly(target.Year, target.Month, target.Day);
+
+			var response = await _sender.Send(new GetMealsScheduleQuery(dateFilter));
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(response.Error));
+			}
+			return Ok(Result.Success(response.Value));
+
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("", exception.Message)));
+		}
+	}
 
 
 	[HttpPost("PrepareMeal")]

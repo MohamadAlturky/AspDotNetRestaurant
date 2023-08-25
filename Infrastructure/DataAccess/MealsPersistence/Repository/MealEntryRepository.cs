@@ -1,4 +1,5 @@
-﻿using Domain.MealEntries.Aggregate;
+﻿using Domain.Customers.Aggregate;
+using Domain.MealEntries.Aggregate;
 using Domain.MealInformations.Aggregate;
 using Domain.Meals.Repositories;
 using Domain.Meals.ValueObjects;
@@ -128,5 +129,52 @@ public class MealEntryRepository : IMealEntryRepository
 	public void Delete(MealEntry fullMealEntry)
 	{
 		_context.Set<MealEntry>().Remove(fullMealEntry);
+	}
+
+	public WeeklyPreparedMeals GetMealsScheduleStartsFrom(DateTime startOfTheWeek)
+	{
+		DateTime endOfTheWeek = startOfTheWeek.AddDays(6);
+		WeeklyPreparedMeals response = new WeeklyPreparedMeals();
+
+		response.StartDay = new DateOnly(startOfTheWeek.Year,
+										 startOfTheWeek.Month,
+										 startOfTheWeek.Day);
+
+		var meals = _context.Set<MealEntry>()
+			.Where(entry => entry.AtDay >= startOfTheWeek)
+			.Where(entry => entry.AtDay <= endOfTheWeek)
+			.Include(entry => entry.MealInformation)
+			.OrderBy(entry => entry.AtDay)
+			.ToList();
+
+		foreach (var entry in meals)
+		{
+			if (entry.MealInformation is null)
+			{
+				throw new Exception("if (entry.Meal == null)");
+			}
+			// error when try to parse to json
+		}
+
+		for (int index = 0; index <= 6; index++)
+		{
+			DailyMeals daily = new DailyMeals();
+			daily.AtDay = new DateOnly(startOfTheWeek.AddDays(index).Year,
+									   startOfTheWeek.AddDays(index).Month,
+									   startOfTheWeek.AddDays(index).Day);
+
+			var dailyMeals = meals.Where(entry =>
+				entry.AtDay == startOfTheWeek.AddDays(index))
+				.Select(entry => ReadModelsMapper.Map(entry)).ToList();
+
+			foreach (var meal in dailyMeals)
+			{
+				daily.Meals.Add(meal);
+			}
+
+			response.Dailies.Add(daily);
+		}
+
+		return response;
 	}
 }

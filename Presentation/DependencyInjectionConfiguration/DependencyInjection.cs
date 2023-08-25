@@ -3,7 +3,7 @@ using Application.Behaviors;
 using Application.IdentityChecker;
 using Domain.AssemblyReference;
 using Domain.Shared.Proxies;
-using Infrastructure;
+using Infrastructure.AssemblyReference;
 using Infrastructure.DataAccess.Interceptors;
 using Infrastructure.Mail.Abstraction;
 using Infrastructure.Mail.HiastMail;
@@ -18,14 +18,16 @@ using Presentation.OptionsSetup.MailAccountSetup;
 using Presentation.OptionsSetup.PipLineOptionsSetup;
 using Presentation.OptionsSetup.SettingsSetup;
 using Presentation.OptionsSetup.SmtpServerSetup;
+using Presentation.OptionsSetup.VerificationCodeSetup;
 using Presentation.Services.MealsImagesSaver;
+using SharedResources.AssemblyReference;
 using System.Reflection;
 using System.Text;
 
 namespace Presentation.DependencyInjectionConfiguration;
 public static class DependencyInjection
 {
-	public static void AddPresentation(this IServiceCollection services)
+	public static void ConfigureSystemOptions(this IServiceCollection services)
 	{
 		// options
 		services.ConfigureOptions<JwtOptionsSetup>();
@@ -33,8 +35,11 @@ public static class DependencyInjection
 		services.ConfigureOptions<PipelineOptionsSetup>();
 		services.ConfigureOptions<SmtpServerSetUp>();
 		services.ConfigureOptions<MailAccountSetUp>();
-
-
+		services.ConfigureOptions<VerificationCodeSetUp>();
+	}
+	public static void AddPresentation(this IServiceCollection services)
+	{
+		
 		//// Presentation level
 		services.AddScoped<IMapper, Mapper>();
 
@@ -72,8 +77,8 @@ public static class DependencyInjection
 		};
 
 		services.AddMediatR(assembliesForConfigureMediatR)
-			.AddScoped(typeof(IPipelineBehavior<,>), typeof(LogableCommandLoggingPipeLineBehavior<,>))
-			.AddScoped(typeof(IPipelineBehavior<,>), typeof(LogableQueryLoggingPipeLineBehavior<,>));
+			.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipeLineBehaviorForLogableCommands<,>))
+			.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipeLineBehaviorForLogableQueries<,>));
 
 
 

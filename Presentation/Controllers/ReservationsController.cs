@@ -25,7 +25,7 @@ public class ReservationsController : APIController
 	private readonly ILogger<ReservationsController> _logger;
 	private readonly IExecutorIdentityProvider _identityProvider;
 	private readonly IUserPersistenceService _userPersistenceService;
-	public ReservationsController(IUserPersistenceService userPersistenceService,ILogger<ReservationsController> logger, ISender sender, IMapper mapper, IExecutorIdentityProvider identityProvider)
+	public ReservationsController(IUserPersistenceService userPersistenceService, ILogger<ReservationsController> logger, ISender sender, IMapper mapper, IExecutorIdentityProvider identityProvider)
 		: base(sender, mapper)
 	{
 		_logger = logger;
@@ -46,8 +46,8 @@ public class ReservationsController : APIController
 		try
 		{
 
-			long customerId = long.Parse(_identityProvider.GetExecutorId()); 
-			Result<CreateReservationResponse> response = await _sender.Send(new CreateReservationCommand(customerId,orderedMealId));
+			long customerId = long.Parse(_identityProvider.GetExecutorId());
+			Result<CreateReservationResponse> response = await _sender.Send(new CreateReservationCommand(customerId, orderedMealId));
 
 			if (response.IsFailure)
 			{
@@ -119,12 +119,12 @@ public class ReservationsController : APIController
 			DateOnly start = DateOnly.Parse(startDate);
 			DateOnly end = DateOnly.Parse(endDate);
 
-			if(start > end)
+			if (start > end)
 			{
 				throw new Exception("start > end");
 			}
 
-			var response = await _sender.Send(new GetReservationsBetweenTwoDatesQuery(start,end));
+			var response = await _sender.Send(new GetReservationsBetweenTwoDatesQuery(start, end));
 
 			if (response.IsFailure)
 			{
@@ -188,8 +188,8 @@ public class ReservationsController : APIController
 
 
 
-	[HttpPost("Consume")]
-	[HasPermission(AuthorizationPermissions.OrderContent)]
+	[HttpPut("Consume")]
+	[HasPermission(AuthorizationPermissions.ConsumeReservations)]
 	public async Task<IActionResult> Consume([FromForm] ReservationConsumeRequest request)
 	{
 		if (!ModelState.IsValid)
@@ -198,7 +198,7 @@ public class ReservationsController : APIController
 		}
 		try
 		{
-			Result checkUserInformation = _userPersistenceService.CheckPasswordValidity(request.SerialNumber,request.Password);
+			Result checkUserInformation = _userPersistenceService.CheckPasswordValidity(request.SerialNumber, request.Password);
 
 
 			if (checkUserInformation.IsFailure)
@@ -206,7 +206,7 @@ public class ReservationsController : APIController
 				return BadRequest(Result.Failure(checkUserInformation.Error));
 			}
 
-			Result response = await _sender.Send(new ConsumeReservationCommand(request.SerialNumber,
+			Result<Domain.Reservations.Aggregate.Reservation> response = await _sender.Send(new ConsumeReservationCommand(request.SerialNumber,
 				request.MealEntryId));
 
 			if (response.IsFailure)
@@ -214,7 +214,10 @@ public class ReservationsController : APIController
 				return BadRequest(Result.Failure(response.Error));
 			}
 
-			return Ok(response);
+			return Ok(new ConsumeReservationResponse()
+			{
+				CustomerName = response.Value.Customer.FirstName + response.Value.Customer.LastName
+			});
 		}
 		catch (Exception exception)
 		{

@@ -1,4 +1,4 @@
-﻿namespace SharedResources;
+﻿namespace Localization;
 
 public class SharedResourcesProvider
 {

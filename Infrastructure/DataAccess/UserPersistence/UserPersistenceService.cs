@@ -1,8 +1,10 @@
 ﻿using Infrastructure.Authentication.Models;
 using Infrastructure.Authentication.PasswordHashing;
 using Infrastructure.DataAccess.DBContext;
+using Infrastructure.ForgetPasswordHandling.Models;
 using Microsoft.EntityFrameworkCore;
 using SharedKernal.Utilities.Result;
+using System.Linq;
 
 namespace Infrastructure.DataAccess.UserPersistence;
 
@@ -73,6 +75,17 @@ public class UserPersistenceService : IUserPersistenceService
 	public void CreateUser(User user)
 	{
 		_context.Set<User>().Add(user);
+	}
+
+	public ForgetPasswordEntry? GetForgetPasswordEntryOnThisDay(long userId)
+	{
+		DateTime toDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+		DateTime tomorrow = toDay.AddDays(1);
+
+		return _context.Set<ForgetPasswordEntry>()
+					.Where(entry => entry.UserId == userId)
+					.Where(entry => entry.AtDay<tomorrow&&entry.AtDay>=toDay)
+					.FirstOrDefault();
 	}
 
 	public User? GetUser(int serialNumber)

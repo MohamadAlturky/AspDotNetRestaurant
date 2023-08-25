@@ -6,7 +6,7 @@ using SharedKernal.CQRS.LogableCommand;
 using SharedKernal.Utilities.Result;
 
 namespace Application.Behaviors;
-public class LogableCommandLoggingPipeLineBehavior<TRequest, TResponse>
+public class LoggingPipeLineBehaviorForLogableCommands<TRequest, TResponse>
 	: IPipelineBehavior<TRequest,TResponse>
 	where TRequest : ILogableCommand<TResponse>
 	where TResponse:Result
@@ -14,7 +14,7 @@ public class LogableCommandLoggingPipeLineBehavior<TRequest, TResponse>
 	private readonly ICommandLogger<TRequest> _commandLogger;
 	private readonly PipeLineSettings _settings;
 
-	public LogableCommandLoggingPipeLineBehavior(ICommandLogger<TRequest> commandLogger, IOptions<PipeLineSettings> options)
+	public LoggingPipeLineBehaviorForLogableCommands(ICommandLogger<TRequest> commandLogger, IOptions<PipeLineSettings> options)
 	{
 		_commandLogger = commandLogger;
 		_settings = options.Value;

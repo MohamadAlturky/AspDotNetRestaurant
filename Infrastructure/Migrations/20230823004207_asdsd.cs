@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations;
 
-    public partial class sds : Migration
+    public partial class asdsd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,22 +32,6 @@ namespace Infrastructure.Migrations;
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customer", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ForgetPasswordEntry",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SerialNumber = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ValidationToken = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ForgetPasswordEntry", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -115,6 +99,54 @@ namespace Infrastructure.Migrations;
                 });
 
             migrationBuilder.CreateTable(
+                name: "AccountTransaction",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountTransaction", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AccountTransaction_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Feedback",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Feedback", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Feedback_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
                 {
@@ -179,6 +211,29 @@ namespace Infrastructure.Migrations;
                         name: "FK_RolePermission_Role_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ForgetPasswordEntry",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SerialNumber = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ValidationToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AtDay = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ForgetPasswordEntry", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ForgetPasswordEntry_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -280,6 +335,11 @@ namespace Infrastructure.Migrations;
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AccountTransaction_CustomerId",
+                table: "AccountTransaction",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Customer_Id",
                 table: "Customer",
                 column: "Id",
@@ -290,6 +350,16 @@ namespace Infrastructure.Migrations;
                 table: "Customer",
                 column: "SerialNumber",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedback_CustomerId",
+                table: "Feedback",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ForgetPasswordEntry_UserId",
+                table: "ForgetPasswordEntry",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Meal_Id",
@@ -364,6 +434,12 @@ namespace Infrastructure.Migrations;
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AccountTransaction");
+
+            migrationBuilder.DropTable(
+                name: "Feedback");
+
             migrationBuilder.DropTable(
                 name: "ForgetPasswordEntry");
 

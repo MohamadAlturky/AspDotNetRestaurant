@@ -1,13 +1,13 @@
-﻿namespace SharedResources.RecourcesKeys;
+﻿namespace Domain.Localization;
 
 public class DomainResourcesKeys
 {
-	public const string Name 
+	public const string Name
 		= "Name";
-	
-	public const string NegativeBalanceException 
+
+	public const string NegativeBalanceException
 		= "NegativeBalanceException";
-	
+
 	public const string SomeOneHasTheSameSerialNumberException
 		= "SomeOneHasTheSameSerialNumberException";
 

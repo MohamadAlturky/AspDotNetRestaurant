@@ -17,4 +17,5 @@ public interface IMealEntryRepository : IRepository<MealEntry>
 	void Add(MealEntry newMeal);
 	MealEntry? GetMealEntryWithAllInformationAboutReservationsAndCustomers(long mealEntryId);
 	void Delete(MealEntry fullMealEntry);
+	WeeklyPreparedMeals GetMealsScheduleStartsFrom(DateTime startOfTheWeek);
 }

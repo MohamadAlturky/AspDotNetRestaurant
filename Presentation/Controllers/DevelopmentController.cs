@@ -4,11 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Presentation.Mappers;
 using System.Net.Mail;
-using SharedResources;
-using SharedResources.RecourcesKeys;
-using SharedResources.LocalizationProviders;
+using Localization;
 using Domain.Shared.Utilities;
 using System.Net;
+using Domain.Localization;
 
 namespace Presentation.Controllers;
 [Route("api/[controller]")]
@@ -141,7 +140,7 @@ public class DevelopmentController : APIController
 	public IActionResult TestLocalizationProvider()
 	{
 		return Ok(LocalizationProvider
-			.GetLocalizer()[DomainResourcesKeys.Name]);
+			.GetResource(DomainResourcesKeys.Name));
 	}
 
 	[HttpGet("Week")]
