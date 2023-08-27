@@ -16,7 +16,8 @@ public class RolesPermissionsConfiguration : IEntityTypeConfiguration<RolePermis
 			Create(RolesDictionary.Manager,PermissionsDictionary.SeePublicContent),
 			Create(RolesDictionary.Manager,PermissionsDictionary.CreateSystemInformation),
 			Create(RolesDictionary.Manager,PermissionsDictionary.ReadSystemInformation),
-			
+			Create(RolesDictionary.Manager,PermissionsDictionary.EditBalances),
+
 			Create(RolesDictionary.Consumer,PermissionsDictionary.ConsumeReservations),
 			Create(RolesDictionary.Consumer,PermissionsDictionary.SeePublicContent),
 			

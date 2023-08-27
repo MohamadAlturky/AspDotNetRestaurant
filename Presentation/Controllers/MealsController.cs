@@ -1,5 +1,6 @@
 ﻿using Application.IdentityChecker;
 using Application.MealEntries.UseCases.CancelMealEntry;
+using Application.MealInformations.UseCases.GetPage;
 using Application.Meals.UseCases.GetMealEntries;
 using Application.Meals.UseCases.GetMealEntriesByDate;
 using Application.Meals.UseCases.GetMealsByName;
@@ -8,6 +9,7 @@ using Application.Meals.UseCases.GetWeeklyMeals;
 using Application.Meals.UseCases.PrepareNewMeal;
 using Application.UseCases.Meals.Create;
 using Application.UseCases.Meals.GetAll;
+using Domain.MealInformations.ReadModels;
 using Domain.Meals.ValueObjects;
 using Infrastructure.Authentication.Permissions;
 using MediatR;
@@ -122,6 +124,20 @@ public class MealsController : APIController
 		}
 
 		return Ok(Result.Success(response.Value.Select(meal => _mapper.Map(meal)).ToList()));
+	}
+
+	[HttpGet("GetMealsPage/{pageNumber}")]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
+	public async Task<IActionResult> GetMealsPage(int pageNumber)
+	{
+		Result<MealsInformationReadModel> response = await _sender.Send(new GetMealsInformationPageQuery(pageNumber));
+
+		if (response.IsFailure)
+		{
+			return BadRequest(Result.Failure(response.Error));
+		}
+
+		return Ok(response);
 	}
 
 	[HttpGet("GetMealsByNameAndType/{mealName}/{mealType}")]

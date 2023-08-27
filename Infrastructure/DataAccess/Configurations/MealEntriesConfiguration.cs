@@ -21,7 +21,7 @@ internal class MealEntriesConfiguration : IEntityTypeConfiguration<MealEntry>
 
 		builder.HasIndex(meal => meal.MealInformationId);
 
-		//builder.HasOne(meal => meal.MealInformation).WithMany(meal=>meal.MealEntries).HasForeignKey(meal => meal.MealInformationId);
+		//builder.HasOne(meal => meal.MealsInformation).WithMany(meal=>meal.MealEntries).HasForeignKey(meal => meal.MealInformationId);
 
 		builder.HasOne(mealEntry => mealEntry.MealInformation)
 				.WithMany(meal => meal.MealEntries)

@@ -6,6 +6,7 @@ using Application.Reservations.UseCases.Create;
 using Application.Reservations.UseCases.GetBetweenTwoDates;
 using Application.Reservations.UseCases.GetByCustomerSerialNumber;
 using Application.Reservations.UseCases.GetByDate;
+using Application.Reservations.UseCases.GetByMealId;
 using Infrastructure.Authentication.Permissions;
 using Infrastructure.DataAccess.UserPersistence;
 using MediatR;
@@ -172,6 +173,27 @@ public class ReservationsController : APIController
 		try
 		{
 			var response = await _sender.Send(new GetStatisticAboutReservationsCustomersTypeQuery(mealEntryId));
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(response.Error));
+			}
+			return Ok(response);
+
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("", exception.Message)));
+		}
+	}
+
+	[HttpGet("GetReservationsByMealId/{mealEntryId}")]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
+	public async Task<IActionResult> GetReservationsByMealId(long mealEntryId)
+	{
+		try
+		{
+			var response = await _sender.Send(new GetReservationsByMealIdQuery(mealEntryId));
 
 			if (response.IsFailure)
 			{

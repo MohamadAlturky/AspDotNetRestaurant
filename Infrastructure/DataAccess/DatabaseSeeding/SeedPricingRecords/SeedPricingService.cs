@@ -18,7 +18,7 @@ public class SeedPricingService : ISeedPricingService
 	{
 		if (_context.Set<PricingRecord>().Any())
 		{
-			return Result.Failure(new SharedKernal.Utilities.Errors.Error("", "The Seed Proccess Is Done Previously"));
+			return Result.Success();
 		}
 		_context.Set<PricingRecord>().AddRange(new List<PricingRecord>()
 		{

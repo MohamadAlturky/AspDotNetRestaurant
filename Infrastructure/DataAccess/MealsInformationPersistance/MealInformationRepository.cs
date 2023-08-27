@@ -1,5 +1,6 @@
 ﻿using Domain.MealEntries.Aggregate;
 using Domain.MealInformations.Aggregate;
+using Domain.MealInformations.ReadModels;
 using Domain.MealInformations.Repositories;
 using Infrastructure.DataAccess.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.DataAccess.MealsInformationPersistance;
 public class MealInformationRepository : IMealInformationRepository
 {
+	private readonly int MEALS_PAGE_SIZE = 10;
 	private readonly RestaurantContext _context;
 
 	public MealInformationRepository(RestaurantContext context)
@@ -65,5 +67,24 @@ public class MealInformationRepository : IMealInformationRepository
 	public int GetNumberOfRecordsForPaginiation()
 	{
 		throw new NotImplementedException();
+	}
+	public MealsInformationReadModel GetMealsInformationPage(int pageNumber)
+	{
+		IOrderedQueryable<MealInformation> queryableMeals = 
+			_context.Set<MealInformation>()
+			.OrderByDescending(entry => entry.Id);
+
+		int size = queryableMeals.Count();
+
+		List<MealInformation> meals = queryableMeals
+			.Skip(MEALS_PAGE_SIZE * (pageNumber - 1))
+			.Take(MEALS_PAGE_SIZE)
+			.ToList();
+		MealsInformationReadModel model = new MealsInformationReadModel()
+		{
+			Count = size,
+			MealsInformation = meals
+		};
+		return model;
 	}
 }

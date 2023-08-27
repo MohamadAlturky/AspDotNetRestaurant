@@ -1,5 +1,6 @@
 ﻿using Domain.MealEntries.Aggregate;
 using Domain.MealInformations.Aggregate;
+using Domain.MealInformations.ReadModels;
 using SharedKernal.Repositories;
 
 namespace Domain.MealInformations.Repositories;
@@ -17,4 +18,5 @@ public interface IMealInformationRepository : IRepository<MealInformation>
 
 	int GetNumberOfRecordsForPaginiation();
 	bool CheckIfMealHasEntryInDay(long mealId, DateOnly day);
+	MealsInformationReadModel GetMealsInformationPage(int pageNumber);
 }

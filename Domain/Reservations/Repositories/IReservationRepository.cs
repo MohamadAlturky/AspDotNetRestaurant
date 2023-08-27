@@ -27,4 +27,5 @@ public interface IReservationRepository : IRepository<Reservation>
 	List<ReservationsCustomerTypeReadModel> GetReservationsGroupedByCustomersTypeOnMeal(long mealEntryId);
 	void UpdateAll(List<Reservation> reservationsToPass);
 	List<Reservation> GetYesterdayReservationsThatPassed();
+	ReservationsReadModel GetReservationsOnMeal(long mealEntryId);
 }

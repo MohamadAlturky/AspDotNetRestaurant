@@ -2,6 +2,7 @@
 using Infrastructure.DataAccess.DatabaseSeeding.SeedSuperUsers;
 using Infrastructure.DataAccess.DatabaseSeeding.SeedPricingRecords;
 using Infrastructure.DataAccess.DBContext;
+using SharedKernal.Utilities.Result;
 
 namespace Presentation.DataBaseSeedingExtension;
 
@@ -15,7 +16,12 @@ public static class DataBaseSeeding
 		ISeedSuperUsersService adminSeeder = new SeedSuperUsersService(dbContext, hashHandler);
 		ISeedPricingService pricingSeeder = new SeedPricingService(dbContext);
 
-		await adminSeeder.SeedSuperUsers();
-		await pricingSeeder.SeedPricing();
+		Result seedSuperUsersResult =  await adminSeeder.SeedSuperUsers();
+		Result seedPriceResult = await pricingSeeder.SeedPricing();
+
+		if(seedPriceResult.IsFailure || seedSuperUsersResult.IsFailure)
+		{
+			throw new DataMisalignedException(seedSuperUsersResult.Error.Message+"   "+ seedPriceResult.Error.Message);
+		}
 	}
 }

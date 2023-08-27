@@ -36,9 +36,9 @@
 //		{
 //			throw new Exception("if(mealEntry is null)");
 //		}
-//		if (mealEntry.MealInformation is null)
+//		if (mealEntry.MealsInformation is null)
 //		{
-//			throw new Exception("mealEntry.MealInformation is null");
+//			throw new Exception("mealEntry.MealsInformation is null");
 //		}
 
 //		var availableMeals = mealEntry.PreparedCount - mealEntry.ReservationsCount;
@@ -59,7 +59,7 @@
 //			PricingRecord? price =
 //				_pricingRepositoryProxy
 //				.GetPriceByCustomerTypeJoinMealType
-//				(reservation.Customer.Category, mealEntry.MealInformation.Type);
+//				(reservation.Customer.Category, mealEntry.MealsInformation.Type);
 
 //			if (price is null)
 //			{
