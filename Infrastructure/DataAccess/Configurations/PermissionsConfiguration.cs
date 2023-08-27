@@ -18,7 +18,8 @@ public class PermissionsConfiguration : IEntityTypeConfiguration<Permission>
 			PermissionsDictionary.ReadContent,
 			PermissionsDictionary.ReadSystemInformation,
 			PermissionsDictionary.ConsumeReservations,
-			PermissionsDictionary.EditBalances
+			PermissionsDictionary.EditBalances,
+			PermissionsDictionary.SeePublicContent
 		};
 
 		builder.HasData(permissions);

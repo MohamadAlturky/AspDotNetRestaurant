@@ -87,8 +87,8 @@ public class Mapper : IMapper
 		return new PricingRecord()
 		{
 			Id = recordDTO.Id,
-			CustomerTypeValue = recordDTO.CustomerTypeValue,
-			MealTypeValue = recordDTO.MealTypeValue,
+			CustomerTypeValue = recordDTO.CustomerType,
+			MealTypeValue = recordDTO.MealType,
 			Price = recordDTO.Price
 		};
 	}
@@ -98,8 +98,8 @@ public class Mapper : IMapper
 		return new PricingRecordDTO()
 		{
 			Id = record.Id,
-			CustomerTypeValue = record.CustomerTypeValue,
-			MealTypeValue = record.MealTypeValue,
+			CustomerType = record.CustomerTypeValue,
+			MealType = record.MealTypeValue,
 			Price = record.Price
 		};
 	}

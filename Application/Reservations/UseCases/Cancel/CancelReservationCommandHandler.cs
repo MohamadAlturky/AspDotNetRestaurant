@@ -1,9 +1,9 @@
-﻿using Domain.Customers.Aggregate;
+﻿using Domain.Anticorruption;
+using Domain.Customers.Aggregate;
 using Domain.MealEntries.Aggregate;
 using Domain.Reservations.Aggregate;
 using Domain.Reservations.Repositories;
 using Domain.Reservations.Services;
-using Domain.Shared.Proxies;
 using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;
 using SharedKernal.Utilities.Errors;
@@ -14,23 +14,21 @@ internal class CancelReservationCommandHandler : ICommandHandler<CancelReservati
 {
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly IReservationRepository _reservationRepository;
-	private readonly CustomerRepositoryProxy _customerRepositoryProxy;
-	private readonly MealEntryRepositoryProxy _mealRepositoryProxy;
-	private readonly PricingRepositoryProxy _pricingRepositoryProxy;
 	private readonly IReservationsService _reservationsService;
+	private readonly ICustomersSupDomainProxy _customersProxy;
+	private readonly IMealEntriesSupDomainProxy _mealsProxy;
+
 	public CancelReservationCommandHandler(IUnitOfWork unitOfWork,
-		IReservationRepository reservationRepository,
-		CustomerRepositoryProxy customerRepositoryProxy,
-		MealEntryRepositoryProxy mealRepositoryProxy,
-		PricingRepositoryProxy pricingRepositoryProxy,
-		IReservationsService reservationsService)
+						IReservationRepository reservationRepository, 
+						IReservationsService reservationsService, 
+						ICustomersSupDomainProxy customersProxy, 
+						IMealEntriesSupDomainProxy mealsProxy)
 	{
 		_unitOfWork = unitOfWork;
 		_reservationRepository = reservationRepository;
-		_customerRepositoryProxy = customerRepositoryProxy;
-		_mealRepositoryProxy = mealRepositoryProxy;
-		_pricingRepositoryProxy = pricingRepositoryProxy;
 		_reservationsService = reservationsService;
+		_customersProxy = customersProxy;
+		_mealsProxy = mealsProxy;
 	}
 
 	public async Task<Result<string>> Handle(CancelReservationCommand request, CancellationToken cancellationToken)
@@ -44,21 +42,21 @@ internal class CancelReservationCommandHandler : ICommandHandler<CancelReservati
 				return Result.Failure<string>(new Error("if (reservation is null)", "if (reservation is null)"));
 			}
 
-			MealEntry? entry = _mealRepositoryProxy.GetMealEntry(reservation.MealEntryId);
+			MealEntry? entry = _mealsProxy.GetMealEntry(reservation.MealEntryId);
 
 			if (entry is null)
 			{
 				return Result.Failure<string>(new Error("entry is null", "entry is null"));
 			}
 
-			Customer? customer = _customerRepositoryProxy.GetCustomerById(reservation.CustomerId);
+			Customer? customer = _customersProxy.GetCustomerById(reservation.CustomerId);
 
 			if (customer is null)
 			{
 				return Result.Failure<string>(new Error("if (customer is null)", "if (customer is null)"));
 			}
 
-			Reservation? firstWaitingReservation = _reservationRepository.GetFirstWaitingReservationsOnEntry(entry.Id);
+			Reservation? firstWaitingReservation = _reservationRepository.GetFirstWaitingReservationOnEntry(entry.Id);
 
 
 

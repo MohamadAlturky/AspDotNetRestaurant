@@ -4,7 +4,7 @@ using SharedKernal.ValueObjects;
 namespace Domain.Customers.ValueObjects;
 
 
-public class Balance : ValueObject<int>
+public record Balance : ValueObject<int>
 {
 	public Balance(int value) : base(value) { }
 

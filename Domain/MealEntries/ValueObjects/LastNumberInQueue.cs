@@ -2,7 +2,7 @@
 using SharedKernal.ValueObjects;
 
 namespace Domain.Meals.ValueObjects;
-public class LastNumberInQueue : ValueObject<int>
+public record LastNumberInQueue : ValueObject<int>
 {
 	public LastNumberInQueue(int value) : base(value) { }
 

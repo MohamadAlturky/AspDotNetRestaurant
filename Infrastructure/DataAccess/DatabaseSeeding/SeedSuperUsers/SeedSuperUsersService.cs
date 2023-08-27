@@ -12,10 +12,6 @@ public class SeedSuperUsersService : ISeedSuperUsersService
 	private readonly RestaurantContext _context;
 	private readonly IHashHandler _hashHandler;
 
-	private readonly string ADMIN_PASSWORD = "admin";
-	private readonly string CONSUMER_PASSWORD = "admin";
-	private readonly string ACCOUNTANT_PASSWORD = "admin";
-
 	private readonly User ADMIN = new User()
 	{
 		Customer = new Customer()
@@ -24,18 +20,12 @@ public class SeedSuperUsersService : ISeedSuperUsersService
 			Balance = 0,
 			BelongsToDepartment = Department.Center.ToString(),
 			Category = CustomerType.RestautantManager.ToString(),
-			FirstName = "مدير",
-			LastName = "المطعم",
-			Notes = "",
+			FirstName = Properties.SuperUsersInformation.AdminName,
 			IsRegular = true,
 			Eligible = true,
 			IsActive = true
 		},
-		Id = 1,
-		Roles = new Role[]
-		{
-			RolesDictionary.Manager
-		}
+		Id = 1
 	};
 	private readonly User CONSUMER = new User()
 	{
@@ -45,18 +35,12 @@ public class SeedSuperUsersService : ISeedSuperUsersService
 			Balance = 0,
 			BelongsToDepartment = Department.Center.ToString(),
 			Category = CustomerType.ReservationsConsumer.ToString(),
-			FirstName = "حساب استهلاك الطعام",
-			LastName = "",
-			Notes = "",
+			FirstName = Properties.SuperUsersInformation.ConsumerName,
 			IsRegular = true,
 			Eligible = true,
 			IsActive = true
 		},
-		Id = 2,
-		Roles = new Role[]
-		{
-			RolesDictionary.Consumer
-		}
+		Id = 2
 	};
 	private readonly User ACCOUNTANT = new User()
 	{
@@ -66,19 +50,14 @@ public class SeedSuperUsersService : ISeedSuperUsersService
 			Balance = 0,
 			BelongsToDepartment = Department.Center.ToString(),
 			Category = CustomerType.Accountant.ToString(),
-			FirstName = "المحاسب",
-			LastName = "",
-			Notes = "",
+			FirstName = Properties.SuperUsersInformation.AccountantName,
 			IsRegular = true,
 			Eligible = true,
 			IsActive = true
 		},
-		Id = 3,
-		Roles = new Role[]
-		{
-			RolesDictionary.Accountant
-		}
+		Id = 3
 	};
+
 	public SeedSuperUsersService(RestaurantContext context, IHashHandler hashHandler)
 	{
 		_context = context;
@@ -102,7 +81,7 @@ public class SeedSuperUsersService : ISeedSuperUsersService
 				{
 					throw new Exception();
 				}
-				ADMIN.HashedPassword = _hashHandler.GetHash(ADMIN_PASSWORD);
+				ADMIN.HashedPassword = _hashHandler.GetHash(Properties.SuperUsersInformation.adminPassword);
 				ADMIN.Roles = new Role[]
 				{
 					adminRole
@@ -118,7 +97,7 @@ public class SeedSuperUsersService : ISeedSuperUsersService
 				{
 					throw new Exception();
 				}
-					CONSUMER.HashedPassword = _hashHandler.GetHash(CONSUMER_PASSWORD);
+					CONSUMER.HashedPassword = _hashHandler.GetHash(Properties.SuperUsersInformation.ReservationConsumerPassword);
 				CONSUMER.Roles = new Role[]
 				{
 					consumerRole
@@ -134,7 +113,7 @@ public class SeedSuperUsersService : ISeedSuperUsersService
 					throw new Exception();
 				}
 
-				ACCOUNTANT.HashedPassword = _hashHandler.GetHash(ACCOUNTANT_PASSWORD);
+				ACCOUNTANT.HashedPassword = _hashHandler.GetHash(Properties.SuperUsersInformation.AccountantPassword);
 				ACCOUNTANT.Roles = new Role[]
 				{
 					accountantRole

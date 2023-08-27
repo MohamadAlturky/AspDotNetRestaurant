@@ -1,7 +1,7 @@
 ﻿using SharedKernal.ValueObjects;
 
 namespace Domain.Meals.ValueObjects;
-internal class MealDescription : ValueObject<string>
+internal record MealDescription : ValueObject<string>
 {
 	public MealDescription(string value) : base(value) { }
 

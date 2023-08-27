@@ -1,4 +1,5 @@
-﻿using Domain.Customers.Repositories;
+﻿using Application.Reservations.UseCases.CollectPassedReservations;
+using Domain.Customers.Repositories;
 using Domain.Localization;
 using Domain.MealInformations.Repositories;
 using Domain.Meals.Repositories;
@@ -8,6 +9,7 @@ using Infrastructure.Authentication.JWTProvider;
 using Infrastructure.Authentication.PasswordHashing;
 using Infrastructure.Authorization.AuthorizationHandlers;
 using Infrastructure.Authorization.AuthorizationPolicyProvider;
+using Infrastructure.BackgroundJobs;
 using Infrastructure.CustomersPersistance.Repository;
 using Infrastructure.DataAccess.MealsInformationPersistance;
 using Infrastructure.DataAccess.PermissionsService;
@@ -27,6 +29,7 @@ using Infrastructure.ReservationsPersistence.Repository;
 using Localization.LocalizationBuilders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 using SharedKernal.Repositories;
 
 namespace Infrastructure.DependencyInjectionConfiguration;
@@ -44,9 +47,9 @@ public static class DependencyInjection
 		services.AddScoped<IHashHandler, HashHandler>();
 		services.AddScoped<IPermissionService, PermissionService>();
 		services.AddScoped<IJwtProvider, JwtProvider>();
-		services.AddSingleton<IAuthorizationHandler, 
+		services.AddSingleton<IAuthorizationHandler,
 			PermissionAuthorizationHandler>();
-		services.AddSingleton<IAuthorizationPolicyProvider, 
+		services.AddSingleton<IAuthorizationPolicyProvider,
 			PermissionAuthorizationPolicyProvider>();
 		services.AddSignalR();
 		services.AddScoped<INotificationService, NotificationService>();
@@ -55,8 +58,15 @@ public static class DependencyInjection
 		services.AddScoped<IVerificationCodeGenerator, VerificationCodeGenerator>();
 		services.AddScoped<IForgetPasswordRepository, ForgetPasswordRepository>();
 		services.AddScoped<IDomainLocalizer, DomainLocalizer>();
-
 		services.AddScoped(typeof(LocalizationBuilder));
 
+		services.AddQuartz(options =>
+		{
+			options.UseMicrosoftDependencyInjectionJobFactory();
+			
+		});
+		services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
+		services.ConfigureOptions<ReservationCollectorBackgroundJobSetup>();
 	}
 }

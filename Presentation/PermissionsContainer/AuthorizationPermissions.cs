@@ -10,4 +10,5 @@ public static class AuthorizationPermissions
 	public const string ReadSystemInformation = "ReadSystemInformation";
 	public const string ConsumeReservations = "ConsumeReservations";
 	public const string EditBalances = "EditBalances";
+	public const string SeePublicContent = "SeePublicContent";
 }

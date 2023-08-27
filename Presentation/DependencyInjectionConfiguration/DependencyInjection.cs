@@ -2,17 +2,15 @@
 using Application.Behaviors;
 using Application.IdentityChecker;
 using Domain.AssemblyReference;
-using Domain.Shared.Proxies;
 using Infrastructure.AssemblyReference;
 using Infrastructure.DataAccess.Interceptors;
-using Infrastructure.Mail.Abstraction;
-using Infrastructure.Mail.HiastMail;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Presentation.IdentityChecker;
 using Presentation.Mappers;
+using Presentation.OptionsSetup.BackGroundJobsSetup;
 using Presentation.OptionsSetup.JWTOptionsSetup;
 using Presentation.OptionsSetup.MailAccountSetup;
 using Presentation.OptionsSetup.PipLineOptionsSetup;
@@ -20,7 +18,6 @@ using Presentation.OptionsSetup.SettingsSetup;
 using Presentation.OptionsSetup.SmtpServerSetup;
 using Presentation.OptionsSetup.VerificationCodeSetup;
 using Presentation.Services.MealsImagesSaver;
-using SharedResources.AssemblyReference;
 using System.Reflection;
 using System.Text;
 
@@ -36,6 +33,7 @@ public static class DependencyInjection
 		services.ConfigureOptions<SmtpServerSetUp>();
 		services.ConfigureOptions<MailAccountSetUp>();
 		services.ConfigureOptions<VerificationCodeSetUp>();
+		services.ConfigureOptions<ScheduleForCollectPassedReservationsSettingsSetUp>();
 	}
 	public static void AddPresentation(this IServiceCollection services)
 	{
@@ -45,11 +43,6 @@ public static class DependencyInjection
 
 
 		// ISingletonReservationQueue
-
-		/// proxies
-		services.AddScoped(typeof(CustomerRepositoryProxy));
-		services.AddScoped(typeof(PricingRepositoryProxy));
-		services.AddScoped(typeof(MealEntryRepositoryProxy));
 
 		services.AddScoped<IAssetsSaver, AssetsSaver>();
 		services.AddSingleton<DomainEventsCollectorInterceptor>();

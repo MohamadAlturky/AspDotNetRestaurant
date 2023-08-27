@@ -2,7 +2,7 @@
 using SharedKernal.ValueObjects;
 
 namespace Domain.Reservations.ValueObjects;
-public class NumberInQueue : ValueObject<int>
+public record NumberInQueue : ValueObject<int>
 {
 	public NumberInQueue(int value) : base(value) { }
 

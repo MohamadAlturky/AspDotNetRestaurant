@@ -3,7 +3,7 @@ using Domain.Reservations.Exceptions;
 using SharedKernal.ValueObjects;
 
 namespace Domain.Reservations.ValueObjects;
-public class Price : ValueObject<int>
+public record Price : ValueObject<int>
 {
 	public Price(int value) : base(value)
 	{

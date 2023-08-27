@@ -48,6 +48,14 @@ public class ReservationsService: IReservationsService
 		firstWaitingReservation.ReservationStatus = OrderStatus.Reserved.ToString();
 	}
 
+	public void ChangeReservationsToPassed(List<Reservation> reservationsToPass)
+	{
+		for(int i = 0; i < reservationsToPass.Count; i++)
+		{
+			reservationsToPass[i].ReservationStatus=OrderStatus.Passed.ToString();
+		}
+	}
+
 	public Reservation ConsumeReservation(Reservation reservation)
 	{
 		if(reservation.ReservationStatus != OrderStatus.Reserved.ToString())
@@ -56,7 +64,7 @@ public class ReservationsService: IReservationsService
 		}
 
 		reservation.ReservationStatus = OrderStatus.Consumed.ToString();
-
+		reservation.MealEntry.ConsumedReservations++;
 		return reservation;
 	}
 

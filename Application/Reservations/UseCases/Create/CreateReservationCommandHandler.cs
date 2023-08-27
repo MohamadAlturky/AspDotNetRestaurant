@@ -1,11 +1,11 @@
 ﻿using Application.Reservations.UseCases.Cancel;
+using Domain.Anticorruption;
 using Domain.Customers.Aggregate;
 using Domain.MealEntries.Aggregate;
 using Domain.Pricing.Aggregate;
 using Domain.Reservations.Aggregate;
 using Domain.Reservations.Repositories;
 using Domain.Reservations.Services;
-using Domain.Shared.Proxies;
 using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;
 using SharedKernal.Utilities.Errors;
@@ -18,23 +18,23 @@ internal class CreateReservationCommandHandler : ICommandHandler<CreateReservati
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly IReservationRepository _reservationRepository;
 	private readonly IReservationsService _reservationsService;
-	private readonly CustomerRepositoryProxy _customerRepositoryProxy;
-	private readonly MealEntryRepositoryProxy _mealRepositoryProxy;
-	private readonly PricingRepositoryProxy _pricingRepositoryProxy;
+	private readonly ICustomersSupDomainProxy _customersProxy;
+	private readonly IMealEntriesSupDomainProxy _mealsProxy;
+	private readonly IPricingRecordsSupDomainProxy _pricingRecordsProxy;
 
 	public CreateReservationCommandHandler(IUnitOfWork unitOfWork,
-		IReservationRepository reservationRepository,
-		CustomerRepositoryProxy customerRepositoryProxy,
-		MealEntryRepositoryProxy mealRepositoryProxy,
-		PricingRepositoryProxy pricingRepositoryProxy,
-		IReservationsService reservationsService)
+						IReservationRepository reservationRepository,
+						IReservationsService reservationsService,
+						ICustomersSupDomainProxy customersProxy,
+						IMealEntriesSupDomainProxy mealsProxy,
+						IPricingRecordsSupDomainProxy pricingRecordsProxy)
 	{
 		_unitOfWork = unitOfWork;
 		_reservationRepository = reservationRepository;
-		_customerRepositoryProxy = customerRepositoryProxy;
-		_mealRepositoryProxy = mealRepositoryProxy;
-		_pricingRepositoryProxy = pricingRepositoryProxy;
 		_reservationsService = reservationsService;
+		_customersProxy = customersProxy;
+		_mealsProxy = mealsProxy;
+		_pricingRecordsProxy = pricingRecordsProxy;
 	}
 
 	public async Task<Result<CreateReservationResponse>> Handle(CreateReservationCommand request,
@@ -42,21 +42,21 @@ internal class CreateReservationCommandHandler : ICommandHandler<CreateReservati
 	{
 		try
 		{
-			MealEntry? entry = _mealRepositoryProxy.GetMealEntry(request.orderedMealId);
+			MealEntry? entry = _mealsProxy.GetMealEntry(request.orderedMealId);
 
 			if (entry is null || entry.MealInformation is null)
 			{
 				return Result.Failure<CreateReservationResponse>(new Error("entry.Meal is null", "entry.Meal is null"));
 			}
 
-			Customer? customer = _customerRepositoryProxy.GetCustomerById(request.customerId);
+			Customer? customer = _customersProxy.GetCustomerById(request.customerId);
 
 			if (customer is null)
 			{
 				return Result.Failure<CreateReservationResponse>(new Error("(customer is null)", "(customer is null)"));
 			}
 
-			PricingRecord? pricingRecord = _pricingRepositoryProxy
+			PricingRecord? pricingRecord = _pricingRecordsProxy
 				.GetPriceByCustomerTypeJoinMealType(customer.Category, entry.MealInformation.Type);
 
 
@@ -90,9 +90,9 @@ internal class CreateReservationCommandHandler : ICommandHandler<CreateReservati
 											 firstQualifiedReservationOnWaitingToCancel);
 
 				reservation = exchangableReservations.Item1;
-				
+
 				firstQualifiedReservationOnWaitingToCancel = exchangableReservations.Item2;
-			
+
 				_reservationRepository.Update(firstQualifiedReservationOnWaitingToCancel);
 			}
 

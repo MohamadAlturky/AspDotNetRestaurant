@@ -8,5 +8,6 @@ public enum OrderStatus
 	Consumed,
 	Reserved,
 	Canceled ,
+	Passed,
 	OnTheCanceledListButNotCanceledYet
 }

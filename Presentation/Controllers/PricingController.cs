@@ -1,6 +1,8 @@
-﻿using Application.Pricing.UseCases.Create;
+﻿using Application.IdentityChecker;
+using Application.Pricing.UseCases.Create;
 using Application.Pricing.UseCases.Delete;
 using Application.Pricing.UseCases.GetAll;
+using Application.Pricing.UseCases.GetByCustomerId;
 using Application.Pricing.UseCases.Update;
 using Domain.Pricing.Aggregate;
 using Infrastructure.Authentication.Permissions;
@@ -20,10 +22,11 @@ namespace Presentation.Controllers;
 public class PricingController : APIController
 {
 	private readonly ILogger<PricingController> _logger;
-
-	public PricingController(ISender sender, IMapper mapper, ILogger<PricingController> logger)
+	private readonly IExecutorIdentityProvider _executorIdentityProvider;
+	public PricingController(IExecutorIdentityProvider executorIdentityProvider,ISender sender, IMapper mapper, ILogger<PricingController> logger)
 		: base(sender, mapper)
 	{
+		_executorIdentityProvider = executorIdentityProvider;
 		_logger = logger;
 	}
 
@@ -94,5 +97,22 @@ public class PricingController : APIController
 		}
 
 		return Ok(response);
+	}
+
+	[HttpGet("GetPricingForCustomer")]
+	[HasPermission(AuthorizationPermissions.ReadContent)]
+	public async Task<IActionResult> GetPricingForCustomer()
+	{
+
+		Result<List<PricingRecord>> response = 
+			await _sender.Send(new GetPricingByCustomerIdQuery
+				(long.Parse(_executorIdentityProvider.GetExecutorId())));
+
+		if (response.IsFailure)
+		{
+			return BadRequest(Result.Failure(response.Error));
+		}
+
+		return Ok(Result.Success(response.Value.Select(record => _mapper.Map(record)).ToList()));
 	}
 }

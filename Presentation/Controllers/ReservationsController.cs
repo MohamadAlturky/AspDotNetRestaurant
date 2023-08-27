@@ -214,10 +214,12 @@ public class ReservationsController : APIController
 				return BadRequest(Result.Failure(response.Error));
 			}
 
-			return Ok(new ConsumeReservationResponse()
+			var answer = new ConsumeReservationResponse()
 			{
-				CustomerName = response.Value.Customer.FirstName + response.Value.Customer.LastName
-			});
+				CustomerName = response.Value.Customer.FirstName + " " + response.Value.Customer.LastName
+			};
+
+			return Ok(Result.Success(answer));
 		}
 		catch (Exception exception)
 		{

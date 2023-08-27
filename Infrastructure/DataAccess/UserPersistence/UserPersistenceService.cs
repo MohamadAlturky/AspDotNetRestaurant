@@ -96,6 +96,14 @@ public class UserPersistenceService : IUserPersistenceService
 			.FirstOrDefault();
 	}
 
+	public async Task<User?> GetUserAsync(int serialNumber)
+	{
+		return await _context.Set<User>()
+			.Include(user => user.Customer)
+			.Where(user => user.Customer.SerialNumber == serialNumber)
+			.FirstOrDefaultAsync();
+	}
+
 	public void UpdateUserPassword(int serialNumber, string password)
 	{
 		User? user = _context.Set<User>()

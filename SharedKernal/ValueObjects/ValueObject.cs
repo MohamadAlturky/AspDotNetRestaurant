@@ -1,6 +1,6 @@
 ﻿namespace SharedKernal.ValueObjects;
 
-public abstract class ValueObject<T> : IValueObject<T> where T : IEquatable<T>
+public abstract record ValueObject<T> : IValueObject<T> where T : IEquatable<T>
 {
 	public T Value { get; }
 

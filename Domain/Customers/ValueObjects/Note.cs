@@ -1,7 +1,7 @@
 ﻿using SharedKernal.ValueObjects;
 
 namespace Domain.Customers.ValueObjects;
-public class Note : ValueObject<string>
+public record Note : ValueObject<string>
 {
 	public Note(string value) : base(value) { }
 

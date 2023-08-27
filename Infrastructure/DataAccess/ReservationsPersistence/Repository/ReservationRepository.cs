@@ -94,13 +94,14 @@ public class ReservationRepository : IReservationRepository
 		.FirstOrDefault();
 	}
 
-	public Reservation? GetFirstWaitingReservationsOnEntry(long entryId)
+	public Reservation? GetFirstWaitingReservationOnEntry(long entryId)
 	{
 		return _context.Set<Reservation>()
 							.Where(reservation => reservation.MealEntryId == entryId)
 							.Where(reservation => reservation.ReservationStatus == OrderStatus.Waiting.ToString())
 							.Include(reservation => reservation.Customer)
 							.OrderBy(reservation => reservation.NumberInQueue)
+							.Where(reservation=>reservation.Customer.Balance >= reservation.Price)
 							.FirstOrDefault();
 	}
 
@@ -147,6 +148,15 @@ public class ReservationRepository : IReservationRepository
 		return answer;
 	}
 
+	public List<Reservation> GetYesterdayReservationsThatPassed()
+	{
+		return _context.Set<Reservation>()
+			.Where(reservation => reservation.AtDay >= DateTime.Now.AddDays(-1))
+			.Where(reservation => reservation.AtDay < DateTime.Now)
+			.Where(reservation=>reservation.ReservationStatus==OrderStatus.Reserved.ToString())
+			.ToList();
+	}
+
 	//public Reservation? GetTheFirstOfWaitingReservationsOnEntry(long id)
 	//{
 	//	return _context.Set<Reservation>()
@@ -170,5 +180,10 @@ public class ReservationRepository : IReservationRepository
 	public void Update(Reservation Entity)
 	{
 		_context.Set<Reservation>().Update(Entity);
+	}
+
+	public void UpdateAll(List<Reservation> reservationsToPass)
+	{
+		_context.Set<Reservation>().UpdateRange(reservationsToPass);
 	}
 }

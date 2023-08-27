@@ -14,6 +14,7 @@ using Presentation.ApiModels;
 using Infrastructure.DataAccess.UserPersistence;
 using Application.IdentityChecker;
 using Infrastructure.ForgetPasswordHandling.ForgetPasswordServices;
+using Presentation.ApiModels.User;
 
 namespace Presentation.Controllers;
 [Route("api/[controller]")]
@@ -24,7 +25,7 @@ public class AuthenticationController : APIController
 	private readonly IUserPersistenceService _userPersistenceService;
 	private readonly IExecutorIdentityProvider _identityProvider;
 	private readonly IForgetPasswordService _forgetPasswordService;
-	public AuthenticationController(IForgetPasswordService forgetPasswordService,IExecutorIdentityProvider identityProvider, IUserPersistenceService persistenceService, ILogger<AuthenticationController> logger, ISender sender, IMapper mapper)
+	public AuthenticationController(IForgetPasswordService forgetPasswordService, IExecutorIdentityProvider identityProvider, IUserPersistenceService persistenceService, ILogger<AuthenticationController> logger, ISender sender, IMapper mapper)
 		: base(sender, mapper)
 	{
 		_forgetPasswordService = forgetPasswordService;
@@ -154,4 +155,34 @@ public class AuthenticationController : APIController
 			return BadRequest(Result.Failure(new Error("Model State", exception.Message)));
 		}
 	}
+
+	[HttpGet("GetAccountInformation")]
+	[HasPermission(AuthorizationPermissions.SeePublicContent)]
+	public async Task<IActionResult> GetAccountInformation()
+	{
+
+		try
+		{
+			User? user = await _userPersistenceService.GetUserAsync(int.Parse(_identityProvider.GetExecutorSerialNumber()));
+			if (user is null)
+			{
+				return BadRequest(Result.Failure(new("", "if (user is null)")));
+			}
+
+			return Ok(Result.Success(new UserDTO()
+			{
+				Id = user.Id,
+				FirstName = user.Customer.FirstName,
+				LastName = user.Customer.LastName,
+				HiastMail = user.HiastMail,
+				MacAddress=_identityProvider.GetMacAddress(),
+				Balance=user.Customer.Balance
+			}));
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("", exception.Message)));
+		}
+	}
+
 }

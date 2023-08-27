@@ -2,7 +2,7 @@
 using SharedKernal.ValueObjects;
 
 namespace Domain.Meals.ValueObjects;
-public class NumberOfReservations : ValueObject<int>
+public record NumberOfReservations : ValueObject<int>
 {
 	public NumberOfReservations(int value) : base(value) { }
 

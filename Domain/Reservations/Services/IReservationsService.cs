@@ -24,4 +24,5 @@ public interface IReservationsService
 	void CancelAndGiveMealTo(Reservation reservationToCancel, Reservation firstWaitingReservation);
 	void Cancel(Reservation reservation);
 	Reservation ConsumeReservation(Reservation reservation);
+	void ChangeReservationsToPassed(List<Reservation> reservationsToPass);
 }

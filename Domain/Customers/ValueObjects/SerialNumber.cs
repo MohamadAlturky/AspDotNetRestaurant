@@ -2,7 +2,7 @@
 using SharedKernal.ValueObjects;
 
 namespace Domain.Customers.ValueObjects;
-public class SerialNumber : ValueObject<int>
+public record SerialNumber : ValueObject<int>
 {
 	public SerialNumber(int value) : base(value) { }
 

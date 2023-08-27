@@ -1,9 +1,9 @@
-﻿using Application.IdentityChecker;
+﻿using System.Net.NetworkInformation;
+using Application.IdentityChecker;
 using Infrastructure.Authentication.Claims;
 using Infrastructure.Authentication.JWTOptions;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 
 namespace Presentation.IdentityChecker;
@@ -68,5 +68,18 @@ public class JWTUserIdentityProvider : IExecutorIdentityProvider
 		string userSerialNumber = token.Claims.First(claim => claim.Type == CustomClaims.Id).Value;
 
 		return userSerialNumber;
+	}
+	public string GetMacAddress()
+	{
+		var mac = NetworkInterface
+			.GetAllNetworkInterfaces()
+			.Where(nic => nic.OperationalStatus == OperationalStatus.Up)
+			.Select(nic => nic.GetPhysicalAddress().ToString())
+			.FirstOrDefault();
+		if(mac is null)
+		{
+			throw new Exception("if(mac is null)");
+		}
+		return mac;
 	}
 }

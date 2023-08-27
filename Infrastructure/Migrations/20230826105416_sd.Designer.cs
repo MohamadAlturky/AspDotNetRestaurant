@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
-    [Migration("20230823004207_asdsd")]
-    partial class asdsd
+    [Migration("20230826105416_sd")]
+    partial class sd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -175,6 +175,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime>("AtDay")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("ConsumedReservations")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -408,6 +411,11 @@ namespace Infrastructure.Migrations
                         {
                             Id = 7,
                             Name = "EditBalances"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "SeePublicContent"
                         });
                 });
 
@@ -475,6 +483,11 @@ namespace Infrastructure.Migrations
                         new
                         {
                             RoleId = 1,
+                            PermissionId = 8
+                        },
+                        new
+                        {
+                            RoleId = 1,
                             PermissionId = 3
                         },
                         new
@@ -489,13 +502,28 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
+                            RoleId = 4,
+                            PermissionId = 8
+                        },
+                        new
+                        {
                             RoleId = 3,
                             PermissionId = 7
                         },
                         new
                         {
+                            RoleId = 3,
+                            PermissionId = 8
+                        },
+                        new
+                        {
                             RoleId = 2,
                             PermissionId = 1
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 8
                         },
                         new
                         {

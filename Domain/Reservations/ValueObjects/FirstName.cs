@@ -1,7 +1,7 @@
 ﻿using SharedKernal.ValueObjects;
 
 namespace Domain.Reservations.ValueObjects;
-public class FirstName : ValueObject<string>
+public record FirstName : ValueObject<string>
 {
 	public FirstName(string value) : base(value) { }
 

@@ -44,4 +44,9 @@ public static class PermissionsDictionary
 		Id = 7,
 		Name = "EditBalances"
 	};
+	public static Permission SeePublicContent => new()
+	{
+		Id = 8,
+		Name = "SeePublicContent"
+	};
 }

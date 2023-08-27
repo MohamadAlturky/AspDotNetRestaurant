@@ -1,7 +1,7 @@
 ﻿using SharedKernal.ValueObjects;
 
 namespace Domain.Customers.ValueObjects;
-public class LastName : ValueObject<string>
+public record LastName : ValueObject<string>
 {
 	public LastName(string value) : base(value) { }
 
