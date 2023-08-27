@@ -98,8 +98,9 @@ public class ReservationsService: IReservationsService
 		reservation.AtDay = entry.AtDay;
 		reservation.Price = pricingRecord.Price;
 
-
-		if (entry.ReservationsCount > entry.PreparedCount)
+		#pragma Edited When Testing was entry.ReservationsCount > entry.PreparedCount
+		
+		if (entry.ReservationsCount >= entry.PreparedCount)
 		{
 			reservation.ReservationStatus = OrderStatus.Waiting.ToString();
 			//reservation.Raise(new SomeCustomerNewInTheWaitingListDomainEvent(entry.Id));

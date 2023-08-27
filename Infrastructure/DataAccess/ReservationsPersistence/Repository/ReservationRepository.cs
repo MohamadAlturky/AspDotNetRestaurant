@@ -32,7 +32,7 @@ public class ReservationRepository : IReservationRepository
 		return _context.Set<Reservation>()
 			   .Where(reservation => reservation.CustomerId == customerId)
 			   .Where(reservation => reservation.MealEntryId == mealEntryId)
-			   .Any();
+			   .Any(reservation=> reservation.ReservationStatus != OrderStatus.Canceled.ToString());
 	}
 
 	public void Delete(Reservation Entity)
