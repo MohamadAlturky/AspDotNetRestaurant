@@ -104,6 +104,12 @@ public class UserPersistenceService : IUserPersistenceService
 			.FirstOrDefaultAsync();
 	}
 
+	public void UpdateUserInformation(User user)
+	{
+		_context.Set<User>().Update(user);
+		_context.SaveChanges();
+	}
+
 	public void UpdateUserPassword(int serialNumber, string password)
 	{
 		User? user = _context.Set<User>()

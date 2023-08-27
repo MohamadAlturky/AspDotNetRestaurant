@@ -28,16 +28,25 @@ builder.Services.AddScoped(typeof(NotificationsHub));
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Persistance level
+//builder.Services.AddDbContext<RestaurantContext>((serviceProvider, option) =>
+//{
+//	DomainEventsCollectorInterceptor? interceptor
+//	= serviceProvider.GetService<DomainEventsCollectorInterceptor>();
+//	if (interceptor is null
+//		|| connectionString is null)
+//	{
+//		throw new ApplicationException();
+//	}
+//	option.UseSqlServer(connectionString).AddInterceptors(interceptor);
+//});
+
 builder.Services.AddDbContext<RestaurantContext>((serviceProvider, option) =>
 {
-	DomainEventsCollectorInterceptor? interceptor
-	= serviceProvider.GetService<DomainEventsCollectorInterceptor>();
-	if (interceptor is null
-		|| connectionString is null)
+	if(connectionString is null)
 	{
 		throw new ApplicationException();
 	}
-	option.UseSqlServer(connectionString).AddInterceptors(interceptor);
+	option.UseSqlServer(connectionString);
 });
 
 // CORS

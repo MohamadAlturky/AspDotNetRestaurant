@@ -7,10 +7,18 @@ using Application.UseCases.Customers.GetByFilter;
 using Application.UseCases.Customers.GetPage;
 using Application.UseCases.Customers.IncreaseCustomerBalance;
 using Domain.Customers.Aggregate;
+using Infrastructure.Authentication.EditUserInformation;
+using Infrastructure.Authentication.Models;
 using Infrastructure.Authentication.Permissions;
+using Infrastructure.Authentication.Register;
+using Infrastructure.DataAccess.UserPersistence;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.ApiModels;
 using Presentation.ApiModels.Customers;
+using Presentation.ApiModels.Register;
+using Presentation.ApiModels.User;
+using Presentation.Factories;
 using Presentation.Mappers;
 using Presentation.PermissionsContainer;
 using SharedKernal.Utilities.Errors;
@@ -23,46 +31,15 @@ namespace Presentation.Controllers;
 [ApiController]
 public class CustomersController : APIController
 {
+	private readonly IUserPersistenceService _userPersistenceService;
 	private readonly ILogger<CustomersController> _logger;
 	private readonly IExecutorIdentityProvider _executorIdentityProvider;
-	public CustomersController(IExecutorIdentityProvider executorIdentityProvider,ISender sender, IMapper mapper, ILogger<CustomersController> logger) : base(sender, mapper)
+	public CustomersController(IUserPersistenceService userPersistenceService, IExecutorIdentityProvider executorIdentityProvider, ISender sender, IMapper mapper, ILogger<CustomersController> logger) : base(sender, mapper)
 	{
 		_logger = logger;
-		_executorIdentityProvider =executorIdentityProvider;
+		_executorIdentityProvider = executorIdentityProvider;
+		_userPersistenceService = userPersistenceService;
 	}
-
-	//[HttpPost("Create")]
-	//public async Task<IActionResult> Create([FromBody] CustomerDTO customer)
-	//{
-	//	if (!ModelState.IsValid)
-	//	{
-	//		return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
-	//	}
-
-	//	try
-	//	{
-	//		Result response = await _sender.Send(new CreateCustomerCommand(_mapper.Map(customer)));
-
-	//		if (response.IsFailure)
-	//		{
-	//			return BadRequest(response);
-	//		}
-	//		Result<Customer> insertedCustomer = await _sender.Send(new GetCustomerBySerialNumberQuery(customer.SerialNumber));
-
-	//		var registerResponse = await _sender.Send(new RegisterNewCustomerCommand(insertedCustomer.Value, customer.Password));
-
-	//		if (registerResponse.IsFailure)
-	//		{
-	//			return BadRequest(registerResponse);
-	//		}
-	//		return Ok(response);
-	//	}
-	//	catch (Exception exception)
-	//	{
-	//		return BadRequest(Result.Failure(new Error("Model State", exception.Message)));
-	//	}
-	//}
-
 
 	[HttpGet("GetAllCustomers")]
 	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
@@ -92,7 +69,7 @@ public class CustomersController : APIController
 		return Ok(response.Value.Select(customer => _mapper.Map(customer)).ToList());
 	}
 
-	[HttpGet("GetCustomerBySerialNumber")]
+	[HttpGet("GetCustomerBySerialNumber/{serialNumber}")]
 	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
 	public async Task<IActionResult> GetCustomerBySerialNumber(int serialNumber)
 	{
@@ -103,7 +80,7 @@ public class CustomersController : APIController
 			return BadRequest(Result.Failure(response.Error));
 		}
 
-		return Ok(_mapper.Map(response.Value));
+		return Ok(Result.Success(_mapper.Map(response.Value)));
 	}
 
 	[HttpGet("GetSumOfCustomersBalances")]
@@ -162,5 +139,63 @@ public class CustomersController : APIController
 		}
 
 		return Ok(response);
+	}
+
+	[HttpGet("GetCustomerInformation/{serialNumber}")]
+	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
+	public async Task<IActionResult> GetCustomerInformation(int serialNumber)
+	{
+
+		try
+		{
+			User? user = await _userPersistenceService.GetUserAsync(serialNumber);
+			if (user is null)
+			{
+				return BadRequest(Result.Failure(new("", "if (user is null)")));
+			}
+
+			return Ok(Result.Success(new CustomerInformation()
+			{
+				Id = user.Id,
+				HiastMail = user.HiastMail,
+				SerialNumber = user.Customer.SerialNumber,
+				FirstName = user.Customer.FirstName,
+				Notes=user.Customer.Notes,
+				LastName = user.Customer.LastName,
+				Balance = user.Customer.Balance,
+				Category = user.Customer.Category,
+				BelongsToDepartment = user.Customer.BelongsToDepartment,
+			}));
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("", exception.Message)));
+		}
+	}
+
+	[HttpPut("EditCustomerInformation")]
+	[HasPermission(AuthorizationPermissions.RegisterCustomer)]
+	public async Task<IActionResult> EditCustomerInformation([FromForm] EditCustomerInformationRequest model)
+	{
+		//if (!ModelState.IsValid)
+		//{
+		//	return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
+		//}
+
+		try
+		{
+			Result response = await _sender.Send(new EditUserInformationCommand(UserFactory.Create(model)));
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(response.Error));
+			}
+
+			return Ok(response);
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("Model State", exception.Message)));
+		}
 	}
 }

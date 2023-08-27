@@ -14,4 +14,5 @@ public interface IUserPersistenceService
 
 	void UpdateUserPassword(int serialNumber,string password);
 	ForgetPasswordEntry? GetForgetPasswordEntryOnThisDay(long id);
+	void UpdateUserInformation(User user);
 }

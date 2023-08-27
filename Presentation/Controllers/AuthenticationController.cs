@@ -184,5 +184,4 @@ public class AuthenticationController : APIController
 			return BadRequest(Result.Failure(new Error("", exception.Message)));
 		}
 	}
-
 }
