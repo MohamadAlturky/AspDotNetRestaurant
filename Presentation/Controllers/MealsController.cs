@@ -1,12 +1,14 @@
 ﻿using Application.IdentityChecker;
 using Application.MealEntries.UseCases.CancelMealEntry;
 using Application.MealInformations.UseCases.GetPage;
+using Application.Meals.UseCases.Delete;
 using Application.Meals.UseCases.GetMealEntries;
 using Application.Meals.UseCases.GetMealEntriesByDate;
 using Application.Meals.UseCases.GetMealsByName;
 using Application.Meals.UseCases.GetMealsSchedule;
 using Application.Meals.UseCases.GetWeeklyMeals;
 using Application.Meals.UseCases.PrepareNewMeal;
+using Application.Meals.UseCases.Update;
 using Application.UseCases.Meals.Create;
 using Application.UseCases.Meals.GetAll;
 using Domain.MealInformations.ReadModels;
@@ -91,17 +93,60 @@ public class MealsController : APIController
 		}
 	}
 
+	[HttpPut("Update")]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
+	public async Task<IActionResult> Update([FromForm] UpdateMealRequest meal)
+	{
+		try
+		{
+			MealDTO mealDTO = new MealDTO()
+			{
+				Id = meal.Id,
+				Type = meal.Type,
+				Name = meal.Name,
+				Description = meal.Description,
+				NumberOfCalories = meal.NumberOfCalories
+			};
+			Result response = await _sender.Send(new UpdateMealCommand(_mapper.Map(mealDTO)));
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(response.Error));
+			}
+
+			return Ok(response);
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error(exception.StackTrace.ToString(), exception.Message)));
+		}
+	}
+
 	//[HttpPost("CreateFile")]
 	//public async Task<IActionResult> CreateFile(IFormFile ImageFile)
 	//{
 	//	return Ok("ImageFile");
 	//}
 
-	[HttpDelete("DeleteMealEntry")]
+	[HttpDelete("DeleteMealEntry/{mealEntryId}")]
 	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
 	public async Task<IActionResult> DeleteMealEntry(long mealEntryId)
 	{
 		var response = await _sender.Send(new CancelMealEntryCommand(mealEntryId));
+
+		if (response.IsFailure)
+		{
+			return BadRequest(Result.Failure(response.Error));
+		}
+
+		return Ok(Result.Success());
+	}
+
+	[HttpDelete("DeleteMealInformation/{mealId}")]
+	[HasPermission(AuthorizationPermissions.CreateSystemInformation)]
+	public async Task<IActionResult> DeleteMealInformation(long mealId)
+	{
+		var response = await _sender.Send(new DeleteMealInformationCommand(mealId));
 
 		if (response.IsFailure)
 		{

@@ -19,4 +19,5 @@ public interface IMealInformationRepository : IRepository<MealInformation>
 	int GetNumberOfRecordsForPaginiation();
 	bool CheckIfMealHasEntryInDay(long mealId, DateOnly day);
 	MealsInformationReadModel GetMealsInformationPage(int pageNumber);
+	bool IsThereAnyEntry(long mealId);
 }

@@ -47,7 +47,7 @@ public class MealInformationRepository : IMealInformationRepository
 
 	public void DeleteInformation(MealInformation Entity)
 	{
-		throw new NotImplementedException();
+		_context.Set<MealInformation>().Remove(Entity);
 	}
 
 	public MealInformation? GetInformationById(long id)
@@ -86,5 +86,10 @@ public class MealInformationRepository : IMealInformationRepository
 			MealsInformation = meals
 		};
 		return model;
+	}
+
+	public bool IsThereAnyEntry(long mealId)
+	{
+		return _context.Set<MealEntry>().Where(entry => entry.MealInformationId == mealId).Any();
 	}
 }
