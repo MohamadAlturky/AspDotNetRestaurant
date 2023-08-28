@@ -1,12 +1,8 @@
-﻿using Application.IdentityChecker;
-using Infrastructure.Authentication.Permissions;
-using Infrastructure.Notification;
-using Infrastructure.Notification.Hubs;
+﻿using Infrastructure.Authentication.Permissions;
 using Infrastructure.Notification.Model;
 using Infrastructure.Notification.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Presentation.ApiModels;
 using Presentation.Mappers;
 using Presentation.PermissionsContainer;
@@ -36,9 +32,28 @@ public class ChatController : APIController
 			{
 				MessageContent=model.Content,
 				MessageSubject=model.Title,
-				SentAt=DateTime.UtcNow
+				SentAt=new DateTime(DateTime.Now.Year, 
+				DateTime.Now.Month, 
+				DateTime.Now.Day, 
+				DateTime.Now.Hour, 
+				DateTime.Now.Minute, 
+				DateTime.Now.Second)
 			});
 			return Ok();
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("Problem", exception.Message)));
+		}
+	}
+	[HttpGet("GetNotificationsPage/{pageNumber}")]
+	[HasPermission(AuthorizationPermissions.SeePublicContent)]
+	public async Task<IActionResult> GetNotificationsPage(int pageNumber)
+	{
+		try
+		{
+			var response = await _notificationService.GetNotificationPage(pageNumber);
+			return Ok(Result.Success(response));
 		}
 		catch (Exception exception)
 		{

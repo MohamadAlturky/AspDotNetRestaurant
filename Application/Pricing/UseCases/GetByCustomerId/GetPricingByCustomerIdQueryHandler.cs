@@ -1,5 +1,4 @@
-﻿using Application.IdentityChecker;
-using Domain.Pricing.Aggregate;
+﻿using Domain.Pricing.Aggregate;
 using Domain.Shared.Repositories;
 using SharedKernal.CQRS.Queries;
 using SharedKernal.Repositories;

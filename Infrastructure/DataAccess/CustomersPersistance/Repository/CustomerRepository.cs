@@ -6,6 +6,7 @@ using Domain.Customers.ReadModels;
 using Domain.Customers.Repositories;
 using Infrastructure.DataAccess.DBContext;
 using Microsoft.EntityFrameworkCore;
+using SharedKernal.Entities;
 
 namespace Infrastructure.CustomersPersistance.Repository;
 public class CustomerRepository : ICustomerRepository
@@ -118,11 +119,22 @@ public class CustomerRepository : ICustomerRepository
 
 	public void Update(Customer Entity)
 	{
+		foreach(var transaction in Entity.AccountTransactions)
+		{
+			transaction.By  = _executorIdentityProvider.GetExecutorSerialNumber();
+		}
 		_context.Set<Customer>().Update(Entity);
 	}
 
 	public void UpdateAll(List<Customer> customers)
 	{
+		foreach(var customer in customers)
+		{
+			foreach (var transaction in customer.AccountTransactions)
+			{
+				transaction.By = _executorIdentityProvider.GetExecutorSerialNumber();
+			}
+		}
 		_context.Set<Customer>().UpdateRange(customers);
 	}
 }
