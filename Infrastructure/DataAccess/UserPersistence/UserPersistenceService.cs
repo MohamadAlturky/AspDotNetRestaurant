@@ -1,15 +1,16 @@
 ﻿using Infrastructure.Authentication.Models;
 using Infrastructure.Authentication.PasswordHashing;
 using Infrastructure.DataAccess.DBContext;
+using Infrastructure.DataAccess.UserPersistence.Models;
 using Infrastructure.ForgetPasswordHandling.Models;
 using Microsoft.EntityFrameworkCore;
 using SharedKernal.Utilities.Result;
-using System.Linq;
 
 namespace Infrastructure.DataAccess.UserPersistence;
 
 public class UserPersistenceService : IUserPersistenceService
 {
+	private readonly static int CUSTOMERS_PAGE_SIZE = int.Parse(Properties.StaticValues.PaginationSize);
 	private readonly RestaurantContext _context;
 	private readonly IHashHandler _hashHandler;
 
@@ -84,7 +85,7 @@ public class UserPersistenceService : IUserPersistenceService
 
 		return _context.Set<ForgetPasswordEntry>()
 					.Where(entry => entry.UserId == userId)
-					.Where(entry => entry.AtDay<tomorrow&&entry.AtDay>=toDay)
+					.Where(entry => entry.AtDay < tomorrow && entry.AtDay >= toDay)
 					.FirstOrDefault();
 	}
 
@@ -102,6 +103,44 @@ public class UserPersistenceService : IUserPersistenceService
 			.Include(user => user.Customer)
 			.Where(user => user.Customer.SerialNumber == serialNumber)
 			.FirstOrDefaultAsync();
+	}
+
+	public async Task<CustomersPaginiationResponse> GetUserPaginatedAsync(int pageNumber)
+	{
+		IOrderedQueryable<User> queryableUsers =
+			_context.Set<User>()
+			.Where(user => user.Id != 1 && user.Id != 2 && user.Id != 3)
+			.Include(user => user.Customer)
+			.OrderByDescending(entry => entry.Id);
+
+		int size = queryableUsers.Count();
+
+		List<User> users = queryableUsers
+			.Skip(CUSTOMERS_PAGE_SIZE * (pageNumber - 1))
+			.Take(CUSTOMERS_PAGE_SIZE)
+			.ToList();
+
+		await _context.SaveChangesAsync();
+
+		List<CustomerInformation> customers = users.Select(user => new CustomerInformation()
+		{
+			Balance = user.Customer.Balance,
+			BelongsToDepartment = user.Customer.BelongsToDepartment,
+			Category = user.Customer.Category,
+			FirstName = user.Customer.FirstName,
+			HiastMail = user.HiastMail,
+			Id = user.Id,
+			LastName = user.Customer.LastName,
+			Notes = user.Customer.Notes,
+			SerialNumber = user.Customer.SerialNumber
+		}).ToList();
+
+		CustomersPaginiationResponse model = new CustomersPaginiationResponse()
+		{
+			Count = size,
+			Customers = customers
+		};
+		return model;
 	}
 
 	public void UpdateUserInformation(User user)

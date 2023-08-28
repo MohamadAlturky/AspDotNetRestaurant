@@ -1,4 +1,5 @@
-﻿using Domain.Customers.Aggregate;
+﻿using Application.ExecutorProvider;
+using Domain.Customers.Aggregate;
 using Domain.Customers.Entities;
 using Domain.Customers.Exceptions;
 using Domain.Customers.ReadModels;
@@ -9,12 +10,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.CustomersPersistance.Repository;
 public class CustomerRepository : ICustomerRepository
 {
-	private readonly int TRANSACTION_PAGE_SIZE = 10;
+	private readonly int TRANSACTION_PAGE_SIZE = int.Parse(Properties.StaticValues.PaginationSize);
 	private readonly RestaurantContext _context;
-
-	public CustomerRepository(RestaurantContext context)
+	private readonly IExecutorIdentityProvider _executorIdentityProvider;
+	public CustomerRepository(RestaurantContext context, IExecutorIdentityProvider executorIdentityProvider)
 	{
 		_context = context;
+		_executorIdentityProvider = executorIdentityProvider;
 	}
 
 
@@ -22,9 +24,9 @@ public class CustomerRepository : ICustomerRepository
 	public void Add(Customer Entity)
 	{
 		Entity.Id = 0;
-		
+
 		var customer = _context.Set<Customer>().FirstOrDefault(customer => customer.SerialNumber == Entity.SerialNumber);
-		
+
 		if (customer is not null)
 		{
 			throw new SomeOneHasTheSameSerialNumberException();
@@ -35,6 +37,7 @@ public class CustomerRepository : ICustomerRepository
 
 	public void AddAccountTransaction(AccountTransaction accountTransaction)
 	{
+		accountTransaction.By = _executorIdentityProvider.GetExecutorSerialNumber();
 		_context.Set<AccountTransaction>().Add(accountTransaction);
 	}
 
@@ -54,23 +57,24 @@ public class CustomerRepository : ICustomerRepository
 	{
 		Customer? customer = _context.Set<Customer>().Where(customer => customer.SerialNumber == serialNumber).FirstOrDefault();
 
-		if(customer is null)
+		if (customer is null)
 		{
 			throw new Exception("public AccountTransactionsReadModel? GetAccountTransactionsPage(int serialNumber, int pageNumber)");
 		}
 		IQueryable<AccountTransaction> transacion = _context.Set<AccountTransaction>()
 			.Where(entry => entry.CustomerId == customer.Id)
-			.OrderByDescending(entry=>entry.Id);
+			.OrderByDescending(entry => entry.Id);
 		int size = transacion.Count();
 		var transactions = transacion
 			.Skip(TRANSACTION_PAGE_SIZE * (pageNumber - 1))
 			.Take(TRANSACTION_PAGE_SIZE)
-			.Select(transaction=>new AccountTransactionReadModel()
+			.Select(transaction => new AccountTransactionReadModel()
 			{
 				Type = transaction.Type,
-				Value=transaction.Value,
-				CreatedAtDay=transaction.CreatedAt.ToString("dddd"),
-				Date= transaction.CreatedAt.ToString("dd/MM/yyyy")
+				Value = transaction.Value,
+				CreatedAtDay = transaction.CreatedAt.ToString("dddd"),
+				Date = transaction.CreatedAt.ToString("dd/MM/yyyy"),
+				By= transaction.By
 			})
 			.ToList();
 		AccountTransactionsReadModel model = new AccountTransactionsReadModel()
@@ -84,10 +88,10 @@ public class CustomerRepository : ICustomerRepository
 
 	public IEnumerable<Customer> GetAll()
 	{
-			return _context.Set<Customer>()
-				.AsNoTracking()
-				.OrderByDescending(customer => customer.Id)
-				.ToList();
+		return _context.Set<Customer>()
+			.AsNoTracking()
+			.OrderByDescending(customer => customer.Id)
+			.ToList();
 	}
 
 	public Customer? GetById(long id)

@@ -1,4 +1,4 @@
-﻿namespace Application.IdentityChecker;
+﻿namespace Application.ExecutorProvider;
 public interface IExecutorIdentityProvider
 {
 	string GetExecutorSerialNumber();

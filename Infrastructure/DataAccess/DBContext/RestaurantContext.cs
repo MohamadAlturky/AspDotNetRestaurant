@@ -1,11 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace Infrastructure.DataAccess.DBContext;
 public class RestaurantContext : DbContext
 {
-	public RestaurantContext(DbContextOptions<RestaurantContext> options)
+	private readonly ILogger<RestaurantContext> _logger;
+
+	public RestaurantContext(DbContextOptions<RestaurantContext> options, ILogger<RestaurantContext> logger)
 			: base(options)
-	{ }
+	{
+		_logger = logger;
+	}
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
 		if (!optionsBuilder.IsConfigured)
@@ -17,5 +23,36 @@ public class RestaurantContext : DbContext
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
 		builder.ApplyConfigurationsFromAssembly(typeof(RestaurantContext).Assembly);
+	}
+
+	public override DbSet<TEntity> Set<TEntity>()
+	{
+		try
+		{
+			return base.Set<TEntity>();
+		}
+		catch (Exception)
+		{
+			throw new Exception("حدثت مشكلة عند الاتصال مع قاعدة المعطيات");
+		}
+	}
+	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+	{
+		try
+		{
+			return base.SaveChangesAsync(cancellationToken);
+		}
+		catch (DBConcurrencyException)
+		{
+			throw new Exception("حدثت مشكلة في التزامن حاول ثانيةً");
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			throw new Exception("حدثت مشكلة في التزامن عند التعديل حاول ثانيةً");
+		}
+		catch (Exception)
+		{
+			throw new Exception("حدثت مشكلة في قاعدة المعطيات حاول ثانيةً");
+		}
 	}
 }

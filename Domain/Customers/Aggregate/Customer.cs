@@ -45,7 +45,7 @@ public class Customer : AggregateRoot
 			CustomerId=this.Id,
 			Type=TransactionType.Decrease.ToString(),
 			Value=value,
-			CreatedAt=DateTime.Now
+			CreatedAt=DateTime.Now,
 		});
 		
 		_balance = new Balance(newBalance);
@@ -59,7 +59,7 @@ public class Customer : AggregateRoot
 			CustomerId = this.Id,
 			Type = TransactionType.Increase.ToString(),
 			Value = value,
-			CreatedAt = DateTime.Now
+			CreatedAt = DateTime.Now,
 		});
 
 		_balance = new Balance(newBalance);

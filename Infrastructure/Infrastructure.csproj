@@ -28,6 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\StaticValues.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StaticValues.resx</DependentUpon>
+    </Compile>
     <Compile Update="Properties\SuperUsersInformation.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -36,6 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Properties\StaticValues.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>StaticValues.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Properties\SuperUsersInformation.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SuperUsersInformation.Designer.cs</LastGenOutput>

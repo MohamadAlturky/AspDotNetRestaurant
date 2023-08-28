@@ -30,7 +30,8 @@ public class JwtProvider : IJwtProvider
 		{
 			new Claim(CustomClaims.Id,user.Id.ToString()),
 			new Claim(CustomClaims.SerialNumber,user.Customer.SerialNumber.ToString()),
-			new Claim(CustomClaims.Name,user.Customer.FirstName.ToString()+" "+ user.Customer.LastName.ToString())
+			new Claim(CustomClaims.Name,user.Customer.FirstName.ToString()+" "+ user.Customer.LastName.ToString()),
+			new Claim(CustomClaims.IsActive,user.Customer.IsActive.ToString())
 		};
 
 		HashSet<string> userPermissions = await _permissionService.GetPermissions(user.Id);

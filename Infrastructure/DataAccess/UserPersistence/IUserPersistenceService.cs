@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Authentication.Models;
+using Infrastructure.DataAccess.UserPersistence.Models;
 using Infrastructure.ForgetPasswordHandling.Models;
 using SharedKernal.Utilities.Result;
 
@@ -15,4 +16,5 @@ public interface IUserPersistenceService
 	void UpdateUserPassword(int serialNumber,string password);
 	ForgetPasswordEntry? GetForgetPasswordEntryOnThisDay(long id);
 	void UpdateUserInformation(User user);
+	Task<CustomersPaginiationResponse> GetUserPaginatedAsync(int pageNumber);
 }

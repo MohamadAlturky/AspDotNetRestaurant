@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.DataAccess.MealsInformationPersistance;
 public class MealInformationRepository : IMealInformationRepository
 {
-	private readonly int MEALS_PAGE_SIZE = 10;
+	private readonly int MEALS_PAGE_SIZE = int.Parse(Properties.StaticValues.PaginationSize);
 	private readonly RestaurantContext _context;
 
 	public MealInformationRepository(RestaurantContext context)

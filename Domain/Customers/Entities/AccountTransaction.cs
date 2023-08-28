@@ -15,7 +15,7 @@ public class AccountTransaction : Entity
 		set => _transactionType = Enum.Parse<TransactionType>(value);
 	}
 	public int Value { get; set; }
-
+	public string By { get; set; } = string.Empty;
 	public long CustomerId { get; set; }
 	public Customer Customer { get; set; }
 

@@ -1,4 +1,4 @@
-﻿namespace Presentation.ApiModels;
+﻿namespace Infrastructure.DataAccess.UserPersistence.Models;
 
 public class CustomerInformation
 {

@@ -2,16 +2,18 @@
 using Application.Customers.UseCases.GetAccountTransactions;
 using Application.Customers.UseCases.GetAll;
 using Application.Customers.UseCases.GetSumOfCustomersBalances;
-using Application.IdentityChecker;
+using Application.ExecutorProvider;
 using Application.UseCases.Customers.GetByFilter;
 using Application.UseCases.Customers.GetPage;
 using Application.UseCases.Customers.IncreaseCustomerBalance;
 using Domain.Customers.Aggregate;
+using Domain.Customers.ValueObjects;
 using Infrastructure.Authentication.EditUserInformation;
 using Infrastructure.Authentication.Models;
 using Infrastructure.Authentication.Permissions;
 using Infrastructure.Authentication.Register;
 using Infrastructure.DataAccess.UserPersistence;
+using Infrastructure.DataAccess.UserPersistence.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ApiModels;
@@ -55,18 +57,21 @@ public class CustomersController : APIController
 		return Ok(response.Value.Select(customer => _mapper.Map(customer)).ToList());
 	}
 
-	[HttpGet("GetPaginatedCustomers")]
+	[HttpGet("GetCustomersPage/{pageNumber}")]
 	[HasPermission(AuthorizationPermissions.ReadSystemInformation)]
-	public async Task<IActionResult> GetPaginatedCustomers(int pageNumber, int pageSize)
+	public async Task<IActionResult> GetCustomersPage(int pageNumber)
 	{
-		Result<List<Customer>> response = await _sender.Send(new GetCustomersPageQuery(pageSize, pageNumber));
-
-		if (response.IsFailure)
+		try
 		{
-			return BadRequest(Result.Failure(response.Error));
-		}
+			CustomersPaginiationResponse customers = await _userPersistenceService.GetUserPaginatedAsync(pageNumber);
+			
 
-		return Ok(response.Value.Select(customer => _mapper.Map(customer)).ToList());
+			return Ok(Result.Success(customers));
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("", exception.Message)));
+		}
 	}
 
 	[HttpGet("GetCustomerBySerialNumber/{serialNumber}")]

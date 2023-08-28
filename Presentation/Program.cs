@@ -11,6 +11,7 @@ using Presentation.DependencyInjectionConfiguration;
 using Serilog;
 using Localization.DependencyInjectionConfiguration;
 using System.Globalization;
+using Presentation.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<IISServerOptions>(options =>
@@ -26,7 +27,7 @@ builder.Services.AddLocalizationBuilders();
 
 builder.Services.AddScoped(typeof(NotificationsHub));
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
+builder.Services.AddSingleton<AudtingSaveChangesInterceptor>();
 // Persistance level
 //builder.Services.AddDbContext<RestaurantContext>((serviceProvider, option) =>
 //{
@@ -40,13 +41,20 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 //	option.UseSqlServer(connectionString).AddInterceptors(interceptor);
 //});
 
+
 builder.Services.AddDbContext<RestaurantContext>((serviceProvider, option) =>
 {
-	if(connectionString is null)
+	AudtingSaveChangesInterceptor? audtingSaveChangesInterceptor =
+		serviceProvider.GetService<AudtingSaveChangesInterceptor>();
+	if (audtingSaveChangesInterceptor is null)
 	{
 		throw new ApplicationException();
 	}
-	option.UseSqlServer(connectionString);
+	if (connectionString is null)
+	{
+		throw new ApplicationException();
+	}
+	option.UseSqlServer(connectionString).AddInterceptors(audtingSaveChangesInterceptor);
 });
 
 // CORS
@@ -59,7 +67,7 @@ builder.Services.AddCors(options =>
 						  //policy.WithOrigins("*")
 						  policy.WithOrigins("http://localhost:5173")
 						  .AllowAnyHeader()
-					      .AllowAnyMethod()
+						  .AllowAnyMethod()
 						  .AllowCredentials();
 					  });
 });
@@ -86,6 +94,7 @@ builder.Services.AddLocalization(opt =>
 	opt.ResourcesPath = "";
 });
 
+builder.Services.AddScoped<GlobalExceptionHandler>();
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
 	List<CultureInfo> supportedCultures = new List<CultureInfo>
@@ -108,10 +117,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	await app.EnsureDataCompleteness();
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
+
+await app.EnsureDataCompleteness();
 
 await app.BuildLocalizationRequirements();
 
@@ -163,7 +173,7 @@ app.UseAuthorization();
 //	endpoint.MapControllers();
 //	endpoint.MapHub<NotificationsHub>("/notifications");
 //});
-
+app.UseMiddleware<GlobalExceptionHandler>();
 app.MapControllers();
 app.MapHub<NotificationsHub>("/notifications");
 app.Run();
