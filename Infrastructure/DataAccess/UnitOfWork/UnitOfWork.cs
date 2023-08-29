@@ -1,10 +1,13 @@
-﻿using Infrastructure.DataAccess.DBContext;
+﻿using Domain.Localization;
+using Infrastructure.DataAccess.DBContext;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using SharedKernal.DomainEvents;
 using SharedKernal.Entities;
 using SharedKernal.Repositories;
 using System.Data;
+using System.Threading;
 
 namespace Infrastructure.DataAccess.UnitOfWork;
 public class UnitOfWork : IUnitOfWork
@@ -30,23 +33,37 @@ public class UnitOfWork : IUnitOfWork
 		_context.SaveChanges();
 	}
 
-	public Task SaveChangesAsync()
+	public async Task SaveChangesAsync()
 	{
-		var domainEvents = _context.ChangeTracker
-			.Entries<AggregateRoot>()
-			.Select(tracker => tracker.Entity)
-			.SelectMany(aggregateRoot =>
-			{
-				var domainEvents = aggregateRoot.DomainEvents;
-				aggregateRoot.ClearDomainEvents();
-				return domainEvents;
-			})
-			.ToList();
-		foreach (var domainEvent in domainEvents)
+		//var domainEvents = _context.ChangeTracker
+		//	.Entries<AggregateRoot>()
+		//	.Select(tracker => tracker.Entity)
+		//	.SelectMany(aggregateRoot =>
+		//	{
+		//		var domainEvents = aggregateRoot.DomainEvents;
+		//		aggregateRoot.ClearDomainEvents();
+		//		return domainEvents;
+		//	})
+		//	.ToList();
+		//foreach (var domainEvent in domainEvents)
+		//{
+		//	_publisher.Publish(domainEvent);
+		//}
+		try
 		{
-			_publisher.Publish(domainEvent);
+			await _context.SaveChangesAsync();
 		}
-
-		return _context.SaveChangesAsync();
+		catch (DBConcurrencyException)
+		{
+			throw new Exception(LocalizationProvider.GetResource(DomainResourcesKeys.DBConcurrencyException));
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			throw new Exception(LocalizationProvider.GetResource(DomainResourcesKeys.DBConcurrencyException));
+		}
+		catch (Exception)
+		{
+			throw new Exception("حدثت مشكلة في قاعدة المعطيات حاول ثانيةً");
+		}
 	}
 }

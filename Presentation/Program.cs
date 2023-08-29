@@ -99,7 +99,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
 	List<CultureInfo> supportedCultures = new List<CultureInfo>
 {
-			new CultureInfo("en-US"),
+			//new CultureInfo("en-US"),
 			new CultureInfo("ar-SY")
 };
 
@@ -139,15 +139,11 @@ app.UseRequestLocalization(options.Value);
 
 app.UseHttpsRedirection();
 app.UseCors(AllowSpecificOrigins);
-
-
-
 app.UseStaticFiles();
 
 var fileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.WebRootPath, "MealsImages"));
 var requestPath = "/MealsImages";
 
-// Enable displaying browser links.
 app.UseStaticFiles(new StaticFileOptions
 {
 	FileProvider = fileProvider,
@@ -167,12 +163,6 @@ app.UseDirectoryBrowser(new DirectoryBrowserOptions
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-//app.UseEndpoints(endpoint =>
-//{
-//	endpoint.MapControllers();
-//	endpoint.MapHub<NotificationsHub>("/notifications");
-//});
 app.UseMiddleware<GlobalExceptionHandler>();
 app.MapControllers();
 app.MapHub<NotificationsHub>("/notifications");

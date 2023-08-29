@@ -1,4 +1,5 @@
-﻿using Domain.Customers.Entities;
+﻿
+using Domain.Customers.Entities;
 using Domain.Customers.ValueObjects;
 using Domain.Reservations.Aggregate;
 using SharedKernal.Entities;
@@ -22,9 +23,9 @@ public class Customer : AggregateRoot
 	public string Category { get => _category.ToString(); set => _category = Enum.Parse<CustomerType>(value); }
 	public string BelongsToDepartment { get => _belongsToDepartment.ToString(); set => _belongsToDepartment = Enum.Parse<Department>(value); }
 	public string Notes { get => _notes.Value; set => _notes = new Note(value); }
-	public ICollection<Reservation> Reservations { get; set; } = new HashSet<Reservation>();
 	public ICollection<Feedback> Feedbacks { get; set; } = new HashSet<Feedback>();
 	public ICollection<AccountTransaction> AccountTransactions { get; set; } = new HashSet<AccountTransaction>();
+	public ICollection<Reservation> Reservations { get; set; } = new HashSet<Reservation>();
 
 
 	public bool IsRegular { get; set; }

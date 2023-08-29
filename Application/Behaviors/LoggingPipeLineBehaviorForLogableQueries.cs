@@ -14,10 +14,10 @@ public class LoggingPipeLineBehaviorForLogableQueries<TRequest, TResponse>
 	private readonly IQueryLogger<TRequest> _queryLogger;
 	private readonly PipeLineSettings _settings;
 
-	public LoggingPipeLineBehaviorForLogableQueries(IQueryLogger<TRequest> queryLogger, IOptions<PipeLineSettings> options)
+	public LoggingPipeLineBehaviorForLogableQueries(IQueryLogger<TRequest> queryLogger, IOptionsMonitor<PipeLineSettings> options)
 	{
 		_queryLogger = queryLogger;
-		_settings = options.Value;
+		_settings = options.CurrentValue;
 	}
 
 	public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,

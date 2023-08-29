@@ -28,4 +28,9 @@ public class DomainResourcesKeys
 
 	public const string NegativeNumberOfReservationsException
 		= "NegativeNumberOfReservationsException";
+
+	public const string PasswordMisMatch
+		= "PasswordMisMatch";
+	public const string DBConcurrencyException
+		= "DBConcurrencyException";
 }

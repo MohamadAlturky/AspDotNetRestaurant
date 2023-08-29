@@ -12,25 +12,7 @@ using SharedKernal.Utilities.Result;
 namespace Application.Reservations.UseCases.Cancel;
 internal class CancelReservationCommandHandler : ICommandHandler<CancelReservationCommand, string>
 {
-	private readonly IUnitOfWork _unitOfWork;
-	private readonly IReservationRepository _reservationRepository;
-	private readonly IReservationsService _reservationsService;
-	private readonly ICustomersSupDomainProxy _customersProxy;
-	private readonly IMealEntriesSupDomainProxy _mealsProxy;
-
-	public CancelReservationCommandHandler(IUnitOfWork unitOfWork,
-						IReservationRepository reservationRepository, 
-						IReservationsService reservationsService, 
-						ICustomersSupDomainProxy customersProxy, 
-						IMealEntriesSupDomainProxy mealsProxy)
-	{
-		_unitOfWork = unitOfWork;
-		_reservationRepository = reservationRepository;
-		_reservationsService = reservationsService;
-		_customersProxy = customersProxy;
-		_mealsProxy = mealsProxy;
-	}
-
+	
 	public async Task<Result<string>> Handle(CancelReservationCommand request, CancellationToken cancellationToken)
 	{
 		try
@@ -84,4 +66,23 @@ internal class CancelReservationCommandHandler : ICommandHandler<CancelReservati
 			return Result.Failure<string>(new Error("___", exception.Message));
 		}
 	}
+	private readonly IUnitOfWork _unitOfWork;
+	private readonly IReservationRepository _reservationRepository;
+	private readonly IReservationsService _reservationsService;
+	private readonly ICustomersSupDomainProxy _customersProxy;
+	private readonly IMealEntriesSupDomainProxy _mealsProxy;
+
+	public CancelReservationCommandHandler(IUnitOfWork unitOfWork,
+						IReservationRepository reservationRepository,
+						IReservationsService reservationsService,
+						ICustomersSupDomainProxy customersProxy,
+						IMealEntriesSupDomainProxy mealsProxy)
+	{
+		_unitOfWork = unitOfWork;
+		_reservationRepository = reservationRepository;
+		_reservationsService = reservationsService;
+		_customersProxy = customersProxy;
+		_mealsProxy = mealsProxy;
+	}
+
 }

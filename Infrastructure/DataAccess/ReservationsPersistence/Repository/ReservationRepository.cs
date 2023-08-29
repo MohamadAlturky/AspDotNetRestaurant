@@ -152,7 +152,8 @@ public class ReservationRepository : IReservationRepository
 		return _context.Set<Reservation>()
 			.Where(reservation => reservation.AtDay >= DateTime.Now.AddDays(-1))
 			.Where(reservation => reservation.AtDay < DateTime.Now)
-			.Where(reservation => reservation.ReservationStatus == OrderStatus.Reserved.ToString())
+			.Where(reservation => reservation.ReservationStatus == OrderStatus.Reserved.ToString()
+			|| reservation.ReservationStatus == OrderStatus.OnTheCanceledListButNotCanceledYet.ToString())
 			.ToList();
 	}
 

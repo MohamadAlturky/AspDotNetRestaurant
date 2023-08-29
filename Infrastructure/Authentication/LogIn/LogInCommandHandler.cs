@@ -1,4 +1,5 @@
-﻿using Infrastructure.Authentication.JWTProvider;
+﻿using Domain.Localization;
+using Infrastructure.Authentication.JWTProvider;
 using Infrastructure.Authentication.Models;
 using Infrastructure.Authentication.PasswordHashing;
 using Infrastructure.DataAccess.DBContext;
@@ -37,7 +38,7 @@ internal class LogInCommandHandler : ICommandHandler<LogInCommand, string>
 			string hashedPassword = user.HashedPassword;
 			if (hashedPassword != _hashHandler.GetHash(request.model.Password))
 			{
-				throw new Exception("hashedPassword != _hashHandler.GetHash(request.model.Password)");
+				throw new Exception(LocalizationProvider.GetResource(DomainResourcesKeys.PasswordMisMatch));
 			}
 
 			string token = await _jWTProvider.Generate(user);

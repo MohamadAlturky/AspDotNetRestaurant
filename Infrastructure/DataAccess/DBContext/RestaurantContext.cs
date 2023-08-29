@@ -36,23 +36,4 @@ public class RestaurantContext : DbContext
 			throw new Exception("حدثت مشكلة عند الاتصال مع قاعدة المعطيات");
 		}
 	}
-	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-	{
-		try
-		{
-			return base.SaveChangesAsync(cancellationToken);
-		}
-		catch (DBConcurrencyException)
-		{
-			throw new Exception("حدثت مشكلة في التزامن حاول ثانيةً");
-		}
-		catch (DbUpdateConcurrencyException)
-		{
-			throw new Exception("حدثت مشكلة في التزامن عند التعديل حاول ثانيةً");
-		}
-		catch (Exception)
-		{
-			throw new Exception("حدثت مشكلة في قاعدة المعطيات حاول ثانيةً");
-		}
-	}
 }

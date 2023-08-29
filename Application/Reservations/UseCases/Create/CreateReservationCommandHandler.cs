@@ -1,20 +1,23 @@
 ﻿using Application.Reservations.UseCases.Cancel;
 using Domain.Anticorruption;
 using Domain.Customers.Aggregate;
+using Domain.Localization;
 using Domain.MealEntries.Aggregate;
 using Domain.Pricing.Aggregate;
 using Domain.Reservations.Aggregate;
 using Domain.Reservations.Repositories;
 using Domain.Reservations.Services;
+using Microsoft.Extensions.Logging;
 using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;
 using SharedKernal.Utilities.Errors;
 using SharedKernal.Utilities.Result;
+using System;
+using System.Data;
 
 namespace Application.Reservations.UseCases.Create;
 internal class CreateReservationCommandHandler : ICommandHandler<CreateReservationCommand, CreateReservationResponse>
 {
-
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly IReservationRepository _reservationRepository;
 	private readonly IReservationsService _reservationsService;
@@ -102,7 +105,6 @@ internal class CreateReservationCommandHandler : ICommandHandler<CreateReservati
 
 			return Result.Success(new CreateReservationResponse(reservation.ReservationStatus, reservation.Id));
 		}
-
 		catch (Exception exception)
 		{
 			return Result.Failure<CreateReservationResponse>(new Error("", exception.Message));

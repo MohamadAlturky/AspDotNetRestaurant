@@ -14,10 +14,11 @@ public class LoggingPipeLineBehaviorForLogableCommands<TRequest, TResponse>
 	private readonly ICommandLogger<TRequest> _commandLogger;
 	private readonly PipeLineSettings _settings;
 
-	public LoggingPipeLineBehaviorForLogableCommands(ICommandLogger<TRequest> commandLogger, IOptions<PipeLineSettings> options)
+	public LoggingPipeLineBehaviorForLogableCommands(ICommandLogger<TRequest> commandLogger,
+		IOptionsMonitor<PipeLineSettings> options)
 	{
 		_commandLogger = commandLogger;
-		_settings = options.Value;
+		_settings = options.CurrentValue;
 	}
 
 	public async Task<TResponse> Handle(TRequest request,

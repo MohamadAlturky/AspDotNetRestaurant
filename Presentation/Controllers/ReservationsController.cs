@@ -67,10 +67,6 @@ public class ReservationsController : APIController
 	[HasPermission(AuthorizationPermissions.OrderContent)]
 	public async Task<IActionResult> Cancel([FromForm] long reservationId)
 	{
-		if (!ModelState.IsValid)
-		{
-			return BadRequest(Result.Failure(new Error("Model State", "Model State is not valid")));
-		}
 		try
 		{
 			Result response = await _sender.Send(new CancelReservationCommand(reservationId));
@@ -84,7 +80,7 @@ public class ReservationsController : APIController
 		}
 		catch (Exception exception)
 		{
-			return BadRequest(Result.Failure(new Error("Model State", exception.Message)));
+			return BadRequest(Result.Failure(new Error("", exception.Message)));
 		}
 	}
 
