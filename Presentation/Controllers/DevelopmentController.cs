@@ -8,6 +8,15 @@ using Localization;
 using Domain.Shared.Utilities;
 using System.Net;
 using Domain.Localization;
+using Application.Meals.UseCases.PrepareNewMeal;
+using SharedKernal.Utilities.Result;
+using Application.Reservations.UseCases.Create;
+using SharedKernal.Utilities.Errors;
+using Infrastructure.Authentication.Register;
+using Infrastructure.Authentication.Models;
+using Domain.Customers.Aggregate;
+using Infrastructure.Authorization.Dictionaries;
+using Domain.Customers.ValueObjects;
 
 namespace Presentation.Controllers;
 [Route("api/[controller]")]
@@ -90,9 +99,9 @@ public class DevelopmentController : APIController
 				Subject = subject,
 				Body = body
 			};
-			
+
 			await smtpClient.SendMailAsync(message);
-			
+
 
 			//SmtpClient client = new SmtpClient();
 
@@ -158,11 +167,148 @@ public class DevelopmentController : APIController
 		//return NotFound();
 
 		List<DateTime> dateTimes = new List<DateTime>();
-		for(int i = 0; i < 10; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			dateTimes.Add(Date.LastSaturdayFrom(DateTime.Now.AddDays(i)));
 		}
 
 		return Ok(dateTimes);
+	}
+
+	[HttpGet("SeedMeals")]
+	public async Task<IActionResult> SeedMeals(long id)
+	{
+
+		for (int i = 0; i < 10000; i++)
+		{
+
+			Result response = await _sender.Send(new
+				PrepareNewMealCommand(id,
+				new DateOnly(DateTime.Now.AddDays(i).Year,
+				DateTime.Now.AddDays(i).Month, DateTime.Now.AddDays(i).Day), 5));
+		}
+
+		return Ok();
+	}
+	[HttpPost("SeedReservations")]
+	public async Task<IActionResult> SeedReservations(long customerId, int from)
+	{
+		for (int i = from; i < 1500; i++)
+		{
+
+			Result response = await _sender.Send(new
+				CreateReservationCommand(customerId, i));
+			if (response.IsFailure)
+			{
+				return BadRequest(new
+				{
+					response.Error,
+					i
+				});
+			}
+		}
+
+		return Ok();
+	}
+
+	[HttpGet("ResultApproach")]
+	public IActionResult ResultApproach()
+	{
+		Result result = Result.Success();
+		for (int i = 0; i < 10; i++)
+		{
+			if (i == 5)
+			{
+				result = Result.Failure(Error.Null);
+				break;
+			}
+		}
+		if (result.IsSuccess)
+		{
+			return BadRequest();
+		}
+		else
+		{
+			return Ok();
+		}
+
+	}
+	[HttpGet("ExceptionApproach")]
+	public IActionResult ExceptionApproach()
+	{
+		try
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				if (i == 5)
+				{
+					throw new Exception();
+				}
+			}
+			return BadRequest();
+		}
+		catch (Exception)
+		{
+			return Ok();
+		}
+	}
+	[HttpPost("SeedCustomers")]
+	public async Task<IActionResult> SeedCustomers(int to)
+	{
+		for (int i = 10000; i <= to; i++)
+		{
+			User user = new()
+			{
+				Customer = new Customer()
+				{
+					Balance =11111111,
+					SerialNumber = i,
+					Category=CustomerType.VeryPoorPeaple.ToString(),
+					Notes="",
+					BelongsToDepartment=Department.UNDefined.ToString(),
+					FirstName="شخص",
+					LastName="منيح",
+					Id=0
+				},
+				Roles = new[]
+				{
+					RolesDictionary.Consumer
+				}
+			};
+			Result response = await _sender.Send(new
+				RegisterNewCustomerCommand(user, i.ToString()));
+			if (response.IsFailure)
+			{
+				return BadRequest(new
+				{
+					response.Error,
+					i
+				});
+			}
+		}
+
+		return Ok();
+	}
+	[HttpPost("SeedReservations2")]
+	public async Task<IActionResult> SeedReservations2(long to)
+	{
+		for(int j = 500; j < 1000; j++)
+		{
+			for (int i = 50; i <= to; i++)
+			{
+				Result response = await _sender.Send(new
+					CreateReservationCommand(j, i));
+				if (response.IsFailure)
+				{
+					return BadRequest(new
+					{
+						response.Error,
+						i
+					});
+				}
+			}
+		}
+
+		return Ok();
 	}
 }

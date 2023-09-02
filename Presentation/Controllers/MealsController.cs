@@ -12,6 +12,7 @@ using Application.Meals.UseCases.Update;
 using Application.UseCases.Meals.Create;
 using Application.UseCases.Meals.GetAll;
 using Domain.MealInformations.ReadModels;
+using Domain.Meals.Repositories;
 using Domain.Meals.ValueObjects;
 using Infrastructure.Authentication.Permissions;
 using MediatR;
@@ -22,9 +23,9 @@ using Presentation.ApiModels.Meals;
 using Presentation.Mappers;
 using Presentation.PermissionsContainer;
 using Presentation.Services.MealsImagesSaver;
+using SharedKernal.Repositories;
 using SharedKernal.Utilities.Errors;
 using SharedKernal.Utilities.Result;
-using System.Globalization;
 
 namespace Presentation.Controllers;
 
@@ -36,14 +37,20 @@ public class MealsController : APIController
 	private readonly ILogger<MealsController> _logger;
 	private readonly IAssetsSaver _assetsSaver;
 	private readonly IExecutorIdentityProvider _identityProvider;
-	public MealsController(ISender sender,
+	private readonly IMealEntryRepository mealEntryRepository;
+	private readonly IUnitOfWork _unitOfWork;
+
+	public MealsController(IUnitOfWork unitOfWork,ISender sender,
 		IMapper mapper,
 		ILogger<MealsController> logger,
 		IAssetsSaver assetsSaver,
-		IExecutorIdentityProvider identityProvider
+		IExecutorIdentityProvider identityProvider,
+		IMealEntryRepository mealEntryRepository
 		)
 		: base(sender, mapper)
 	{
+		_unitOfWork = unitOfWork;
+		this.mealEntryRepository = mealEntryRepository;
 		_assetsSaver = assetsSaver;
 		_logger = logger;
 		_identityProvider = identityProvider;
@@ -291,6 +298,41 @@ public class MealsController : APIController
 			return BadRequest(Result.Failure(new Error("", exception.Message)));
 		}
 	}
+	/// <summary>
+	/// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// </summary>
+	/// <param name="WeekNumber"></param>
+	/// <returns></returns>
+
+	[HttpGet("GetWeeklyMealsFromRoute/{WeekNumber}")]
+	[HasPermission(AuthorizationPermissions.ReadContent)]
+	public async Task<IActionResult> GetWeeklyMealsFromRoute(int WeekNumber)
+	{
+		try
+		{
+
+			DateTime target = DateTime.Now.AddDays(7 * WeekNumber);
+
+			DateOnly dateFilter = new DateOnly(target.Year, target.Month, target.Day);
+
+			long id = long.Parse(_identityProvider.GetExecutorId());
+
+			var response = await _sender.Send(new GetWeeklyMealsQuery(dateFilter, id));
+
+			if (response.IsFailure)
+			{
+				return BadRequest(Result.Failure(response.Error));
+			}
+
+			return Ok(Result.Success(response.Value));
+
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(Result.Failure(new Error("", exception.Message)));
+		}
+	}
+
 
 	[HttpGet("GetMealsSchedule")]
 	public async Task<IActionResult> GetMealsSchedule(int WeekNumber)

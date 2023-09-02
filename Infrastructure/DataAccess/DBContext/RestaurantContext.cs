@@ -5,12 +5,10 @@ using System.Data;
 namespace Infrastructure.DataAccess.DBContext;
 public class RestaurantContext : DbContext
 {
-	private readonly ILogger<RestaurantContext> _logger;
 
-	public RestaurantContext(DbContextOptions<RestaurantContext> options, ILogger<RestaurantContext> logger)
+	public RestaurantContext(DbContextOptions<RestaurantContext> options)
 			: base(options)
 	{
-		_logger = logger;
 	}
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{

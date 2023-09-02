@@ -4,14 +4,13 @@ using SharedKernal.Repositories;
 using SharedKernal.Utilities.Result;
 
 namespace Application.UseCases.Meals.Create;
-public class GetMealsCommandHandler : ICommandHandler<CreateMealCommand>
+public class CreateMealCommandHandler : ICommandHandler<CreateMealCommand>
 {
-	private IUnitOfWork _unitOfWork { get; set; }
+	private readonly IUnitOfWork _unitOfWork;
+	private readonly IMealInformationRepository _mealRepository;
 
-	private IMealInformationRepository _mealRepository { get; set; }
 
-
-	public GetMealsCommandHandler(IUnitOfWork unitOfWork, IMealInformationRepository mealRepository)
+	public CreateMealCommandHandler(IUnitOfWork unitOfWork, IMealInformationRepository mealRepository)
 	{
 		_unitOfWork = unitOfWork;
 		_mealRepository = mealRepository;

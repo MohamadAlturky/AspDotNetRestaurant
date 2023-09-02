@@ -6,6 +6,6 @@ public interface IUnitOfWork
 {
     void SaveChanges();
     Task SaveChangesAsync();
-
+	void EndTransaction();
 	IDbTransaction BeginTransaction();
 }

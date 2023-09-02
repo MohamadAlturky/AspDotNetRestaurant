@@ -5,7 +5,7 @@ public static class ReadModelsMapper
 {
 	public static MealReadModel Map(MealEntry mealEntry)
 	{
-		if(mealEntry.MealInformation is null)
+		if (mealEntry.MealInformation is null)
 		{
 			throw new Exception("if(mealEntry.Meal is null)");
 		}

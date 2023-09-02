@@ -6,7 +6,7 @@ using SharedKernal.Utilities.Errors;
 using SharedKernal.Utilities.Result;
 
 namespace Application.MealInformations.UseCases.GetPage;
-internal class GetMealsInformationPageQueryHandler : IQueryHandler<GetMealsInformationPageQuery, MealsInformationReadModel>
+public class GetMealsInformationPageQueryHandler : IQueryHandler<GetMealsInformationPageQuery, MealsInformationReadModel>
 {
 
 	private readonly IUnitOfWork _unitOfWork;

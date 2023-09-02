@@ -27,43 +27,44 @@ internal class RegisterNewCustomerCommandHandler : ICommandHandler<RegisterNewCu
 	public async Task<Result> Handle(RegisterNewCustomerCommand request, 
 		CancellationToken cancellationToken)
 	{
-		using var transaction = _unitOfWork.BeginTransaction();
-		try
-		{
-			User user = request.user;
-			if(user.Customer is null)
+		using (var transaction = _unitOfWork.BeginTransaction()) {
+			try
 			{
-				throw new Exception("if(user.Customer is null)");
+				User user = request.user;
+				if (user.Customer is null)
+				{
+					throw new Exception("if(user.Customer is null)");
+				}
+				Customer customer = user.Customer;
+				List<Role> roles = user.Roles.ToList();
+				string hashedPassword = _hashHandler.GetHash(request.password);
+
+
+				_customerRepository.Add(customer);
+				await _unitOfWork.SaveChangesAsync();
+
+				user.Roles = null!;
+
+				user.HashedPassword = hashedPassword;
+
+
+				_userPersistence.CreateUser(user);
+				await _unitOfWork.SaveChangesAsync();
+
+
+				_userPersistence.AddRolesToUser(user.Id, roles);
+				await _unitOfWork.SaveChangesAsync();
+
+				transaction.Commit();
+				_unitOfWork.EndTransaction();
+				return Result.Success();
 			}
-			Customer customer = user.Customer;
-			List<Role> roles = user.Roles.ToList();
-			string hashedPassword = _hashHandler.GetHash(request.password);
-
-
-			_customerRepository.Add(customer);
-			await _unitOfWork.SaveChangesAsync();
-
-			user.Roles = null!;
-			
-			user.HashedPassword = hashedPassword;
-
-
-			_userPersistence.CreateUser(user);
-			await _unitOfWork.SaveChangesAsync();
-
-
-			_userPersistence.AddRolesToUser(user.Id, roles);
-			await _unitOfWork.SaveChangesAsync();
-
-			transaction.Commit();
-			 
-			return Result.Success();
-		}
-		catch (Exception exception)
-		{
-			transaction.Rollback();
-
-			return Result.Failure(new SharedKernal.Utilities.Errors.Error("", exception.Message));
+			catch (Exception exception)
+			{
+				transaction.Rollback();
+				_unitOfWork.EndTransaction();
+				return Result.Failure(new SharedKernal.Utilities.Errors.Error("", exception.Message));
+			}
 		}
 	}
 }

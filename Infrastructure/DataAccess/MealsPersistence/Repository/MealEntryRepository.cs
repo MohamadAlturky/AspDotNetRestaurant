@@ -3,16 +3,20 @@ using Domain.MealEntries.Aggregate;
 using Domain.MealInformations.Aggregate;
 using Domain.Meals.Repositories;
 using Domain.Meals.ValueObjects;
+using Domain.Reservations.Aggregate;
 using Domain.Shared.ReadModels;
 using Infrastructure.DataAccess.DBContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Reflection.Metadata;
 
 namespace Infrastructure.MealsPersistence.Repository;
 
 public class MealEntryRepository : IMealEntryRepository
 {
 	private readonly RestaurantContext _context;
-
 	public MealEntryRepository(RestaurantContext context)
 	{
 		_context = context;
@@ -73,12 +77,13 @@ public class MealEntryRepository : IMealEntryRepository
 										 startOfTheWeek.Day);
 
 		var meals = _context.Set<MealEntry>()
-			.Where(entry => entry.AtDay >= startOfTheWeek)
-			.Where(entry => entry.AtDay <= endOfTheWeek)
+			.OrderBy(entry => entry.AtDay)
+			.AsSplitQuery()
+			.Where(entry => entry.AtDay >= startOfTheWeek && entry.AtDay <= endOfTheWeek)
 			.Include(entry => entry.MealInformation)
 			.Include(entry => entry.Reservations
 				.Where(res => res.CustomerId == customerId))
-			.OrderBy(entry => entry.AtDay)
+			.AsNoTracking()
 			.ToList();
 
 		foreach (var entry in meals)
@@ -111,6 +116,76 @@ public class MealEntryRepository : IMealEntryRepository
 
 		return response;
 	}
+	//public WeeklyPreparedMeals GetWeeklyMealsStartsFrom(DateTime startOfTheWeek, long customerId)
+	//{
+	//	DateTime endOfTheWeek = startOfTheWeek.AddDays(6);
+
+	//	WeeklyPreparedMeals response = new WeeklyPreparedMeals();
+
+	//	response.StartDay = new DateOnly(startOfTheWeek.Year, startOfTheWeek.Month, startOfTheWeek.Day);
+
+	//	//List<MealEntry> meals = _context.Set<MealEntry>()
+	//	//					.Where(entry => entry.AtDay >= startOfTheWeek && entry.AtDay <= endOfTheWeek)
+	//	//					.Include(entry => entry.Reservations.Where(res => res.CustomerId == customerId))
+	//	//					//.Include(entry => entry.MealInformation)
+	//	//					.OrderBy(entry => entry.AtDay)
+	//	//					.AsNoTracking()
+	//	//					.ToList();
+
+
+
+	//	//foreach (var meal in meals)
+	//	//{
+	//	//	meal.MealInformation = _context.Set<MealInformation>().Find(meal.MealInformationId);
+	//	//}
+	//	var meals = from mealEntry in _context.Set<MealEntry>()
+	//				join mealInfo in _context.Set<MealInformation>() on mealEntry.MealInformationId equals mealInfo.Id
+	//				join reservation in _context.Set<Reservation>() on mealEntry.Id equals reservation.MealEntryId
+	//				where reservation.CustomerId == customerId
+	//					&& mealEntry.AtDay >= startOfTheWeek
+	//					&& mealEntry.AtDay <= endOfTheWeek
+	//				orderby mealEntry.AtDay
+	//				select new MealEntry()
+	//				{
+	//					Id = mealEntry.Id,
+	//					MealInformation = mealInfo,
+	//					AtDay = mealEntry.AtDay,
+	//					ConsumedReservations = mealEntry.ConsumedReservations,
+	//					CreatedAt = mealEntry.CreatedAt,
+	//					CustomerCanCancel = mealEntry.CustomerCanCancel,
+	//					LastNumberInQueue = mealEntry.LastNumberInQueue,
+	//					MealInformationId = mealEntry.MealInformationId,
+	//					UpdatedAt = mealEntry.UpdatedAt,
+	//					PreparedCount = mealEntry.PreparedCount,
+	//					ReservationsCount = mealEntry.ReservationsCount,
+	//					RowVersion = mealEntry.RowVersion,
+	//					Reservations = new List<Reservation>()
+	//					{
+	//						reservation
+	//					}
+	//				};
+
+
+
+
+	//	for (int index = 0; index <= 6; index++)
+	//	{
+	//		DateTime currentDay = startOfTheWeek.AddDays(index);
+	//		var dailyMeals = meals.Where(entry => entry.AtDay == currentDay)
+	//							  .Select(entry => ReadModelsMapper.Map(entry))
+	//							  .ToList();
+
+	//		DailyMeals daily = new DailyMeals()
+	//		{
+	//			AtDay = new DateOnly(currentDay.Year, currentDay.Month, currentDay.Day),
+	//			Meals = dailyMeals
+	//		};
+
+	//		response.Dailies.Add(daily);
+	//	}
+
+	//	return response;
+	//}
 
 	public void Add(MealEntry newMeal)
 	{
@@ -122,7 +197,7 @@ public class MealEntryRepository : IMealEntryRepository
 	{
 		return _context.Set<MealEntry>()
 			.Include(mealEntry => mealEntry.Reservations)
-			.ThenInclude(reservatoin=>reservatoin.Customer)
+			.ThenInclude(reservatoin => reservatoin.Customer)
 			.FirstOrDefault(mealEntry => mealEntry.Id == mealEntryId);
 	}
 

@@ -14,12 +14,16 @@ public class UnitOfWork : IUnitOfWork
 {
 	private readonly RestaurantContext _context;
 
-	private readonly IPublisher _publisher;
+	//private readonly IPublisher _publisher;
 
-	public UnitOfWork(RestaurantContext context, IPublisher publisher)
+	//public UnitOfWork(RestaurantContext context, IPublisher publisher)
+	//{
+	//	_context = context;
+	//	_publisher = publisher;
+	//}
+	public UnitOfWork(RestaurantContext context)
 	{
 		_context = context;
-		_publisher = publisher;
 	}
 
 	public IDbTransaction BeginTransaction()
@@ -27,6 +31,11 @@ public class UnitOfWork : IUnitOfWork
 		IDbContextTransaction transaction = _context.Database.BeginTransaction();
 		return transaction.GetDbTransaction();
 	}
+	public void EndTransaction()
+	{
+		_context.Database.CloseConnection();
+	}
+
 
 	public void SaveChanges()
 	{

@@ -8,9 +8,9 @@ namespace Application.Customers.UseCases.GetAll;
 internal class GetAllCustomersQueryHandler : ILogableQueryHandler<GetAllCustomersQuery, Result<List<Customer>>>
 {
 
-	private ICustomerRepository _customerRepository;
+	private readonly ICustomerRepository _customerRepository;
 
-	private IUnitOfWork _unitOfWork;
+	private readonly IUnitOfWork _unitOfWork;
 
 	public GetAllCustomersQueryHandler(ICustomerRepository customerRepository, IUnitOfWork unitOfWork)
 	{

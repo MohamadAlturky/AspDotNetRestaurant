@@ -36,11 +36,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedResources", "SharedResources", "{9CD01827-A233-4BB9-AD2E-C56D879DD84B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBaseBenchmarks", "DataBaseBenchmarks\DataBaseBenchmarks.csproj", "{380DEA77-D5DC-493A-900D-E1052928BF5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "DataBaseBenchmarks\Benchmarks.csproj", "{380DEA77-D5DC-493A-900D-E1052928BF5A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArchitectureTests", "ArchitectureTests\ArchitectureTests.csproj", "{88A70595-3C84-40BE-8849-6CBD065006ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{F9526BE8-316E-4553-8863-CBDAA94A694D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{F9526BE8-316E-4553-8863-CBDAA94A694D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

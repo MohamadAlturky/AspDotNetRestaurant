@@ -5,7 +5,7 @@ namespace UnitTests.ApplicationLayerTests;
 
 public class ReservationsCommandHandlersTests
 {
-	[Fact]
+	
 	public void CreateReservationCommandHandler_ShouldReturnSuccess()
 	{
 		//var handler = new CreateReservationCommandHandler

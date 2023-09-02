@@ -20,7 +20,7 @@ internal class GetWeeklyMealsQueryHandler : IQueryHandler<GetWeeklyMealsQuery, W
 		_identityProvider = identityProvider;
 	}
 
-	public async Task<Result<WeeklyPreparedMeals>> Handle(GetWeeklyMealsQuery request, CancellationToken cancellationToken)
+	public Task<Result<WeeklyPreparedMeals>> Handle(GetWeeklyMealsQuery request, CancellationToken cancellationToken)
 	{
 		try
 		{
@@ -31,13 +31,13 @@ internal class GetWeeklyMealsQueryHandler : IQueryHandler<GetWeeklyMealsQuery, W
 							 request.dayOfTheWeek.Day));
 			string customerId = _identityProvider.GetExecutorSerialNumber();
 			WeeklyPreparedMeals response = _mealRepository.GetWeeklyMealsStartsFrom(startOfTheWeek,request.customerId);
-			await _unitOfWork.SaveChangesAsync();
-			return Result.Success(response);
+			//await _unitOfWork.SaveChangesAsync();
+			return Task.FromResult( Result.Success(response));
 
 		}
 		catch (Exception exception)
 		{
-			return Result.Failure<WeeklyPreparedMeals>(new SharedKernal.Utilities.Errors.Error("", exception.Message));
+			return Task.FromResult( Result.Failure<WeeklyPreparedMeals>(new SharedKernal.Utilities.Errors.Error("", exception.Message)));
 		}
 
 

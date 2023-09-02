@@ -23,4 +23,9 @@
     <ProjectReference Include="..\SharedResources\SharedResources.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="logs\" />
+    <Folder Include="wwwroot\MealsImages\" />
+  </ItemGroup>
+
 </Project>

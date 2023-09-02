@@ -126,6 +126,7 @@ public class ReservationRepository : IReservationRepository
 		return _context.Set<Reservation>()
 			.Where(reservation => reservation.MealEntryId == mealEntryId)
 			.Include(reservation => reservation.Customer)
+			.Include(reservation => reservation.MealEntry)
 			.Where(reservation => reservation.Customer.SerialNumber == serialNumber)
 			.FirstOrDefault();
 	}
