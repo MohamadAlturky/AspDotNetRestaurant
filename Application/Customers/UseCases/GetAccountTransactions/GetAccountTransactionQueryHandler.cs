@@ -1,14 +1,13 @@
-﻿using Domain.Customers.Entities;
-using Domain.Customers.ReadModels;
+﻿using Domain.Customers.ReadModels;
 using Domain.Customers.Repositories;
 using SharedKernal.CQRS.Queries;
 using SharedKernal.Repositories;
 using SharedKernal.Utilities.Errors;
 using SharedKernal.Utilities.Result;
-using System;
 
 namespace Application.Customers.UseCases.GetAccountTransactions;
-internal class GetAccountTransactionQueryHandler : IQueryHandler<GetAccountTransactionsQuery, AccountTransactionsReadModel>
+internal sealed class GetAccountTransactionQueryHandler 
+	: IQueryHandler<GetAccountTransactionsQuery, AccountTransactionsReadModel>
 {
 
 	private readonly ICustomerRepository _customerRepository;
@@ -20,7 +19,8 @@ internal class GetAccountTransactionQueryHandler : IQueryHandler<GetAccountTrans
 		_unitOfWork = unitOfWork;
 	}
 
-	public async Task<Result<AccountTransactionsReadModel>> Handle(GetAccountTransactionsQuery request, CancellationToken cancellationToken)
+	public async Task<Result<AccountTransactionsReadModel>> Handle(GetAccountTransactionsQuery request,
+		CancellationToken cancellationToken)
 	{
 		try
 		{

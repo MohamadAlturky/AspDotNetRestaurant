@@ -1,16 +1,16 @@
 ﻿using Domain.Customers.Aggregate;
 using Domain.Customers.Exceptions;
 using Domain.Customers.Repositories;
+using Domain.Localization;
 using SharedKernal.CQRS.Commands;
 using SharedKernal.Repositories;
+using SharedKernal.Utilities.Errors;
 using SharedKernal.Utilities.Result;
-using System;
 
 namespace Application.UseCases.Customers.IncreaseCustomerBalance;
-internal class IncreaseCustomerBalanceCommandHandler : ICommandHandler<IncreaseCustomerBalanceCommand>
+internal sealed class IncreaseCustomerBalanceCommandHandler : ICommandHandler<IncreaseCustomerBalanceCommand>
 {
 	private readonly ICustomerRepository _customerRepository;
-
 	private readonly IUnitOfWork _unitOfWork;
 
 	public IncreaseCustomerBalanceCommandHandler(ICustomerRepository customerRepository, IUnitOfWork unitOfWork)
@@ -23,7 +23,7 @@ internal class IncreaseCustomerBalanceCommandHandler : ICommandHandler<IncreaseC
 	{
 		if (request.valueToAddToTheBalance <= 0)
 		{
-			return Result.Failure(new SharedKernal.Utilities.Errors.Error("", "if (request.valueToAddToTheBalance <= 0)"));
+			return Result.Failure(new Error("", LocalizationProvider.GetResource(DomainResourcesKeys.NegativeBalanceException)));
 		}
 
 		try

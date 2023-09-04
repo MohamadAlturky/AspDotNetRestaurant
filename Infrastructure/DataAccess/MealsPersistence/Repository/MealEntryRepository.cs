@@ -216,10 +216,12 @@ public class MealEntryRepository : IMealEntryRepository
 										 startOfTheWeek.Day);
 
 		var meals = _context.Set<MealEntry>()
+			.AsSplitQuery()
 			.Where(entry => entry.AtDay >= startOfTheWeek)
 			.Where(entry => entry.AtDay <= endOfTheWeek)
 			.Include(entry => entry.MealInformation)
 			.OrderBy(entry => entry.AtDay)
+			.AsNoTracking()
 			.ToList();
 
 		foreach (var entry in meals)

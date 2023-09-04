@@ -179,13 +179,13 @@ public class DevelopmentController : APIController
 	public async Task<IActionResult> SeedMeals(long id)
 	{
 
-		for (int i = 0; i < 10000; i++)
+		for (int i = 0; i < 800; i++)
 		{
 
 			Result response = await _sender.Send(new
 				PrepareNewMealCommand(id,
 				new DateOnly(DateTime.Now.AddDays(i).Year,
-				DateTime.Now.AddDays(i).Month, DateTime.Now.AddDays(i).Day), 5));
+				DateTime.Now.AddDays(i).Month, DateTime.Now.AddDays(i).Day), 114));
 		}
 
 		return Ok();

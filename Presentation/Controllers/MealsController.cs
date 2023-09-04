@@ -304,19 +304,20 @@ public class MealsController : APIController
 	/// <param name="WeekNumber"></param>
 	/// <returns></returns>
 
+	private readonly Random random = new();
 	[HttpGet("GetWeeklyMealsFromRoute/{WeekNumber}")]
 	[HasPermission(AuthorizationPermissions.ReadContent)]
-	public async Task<IActionResult> GetWeeklyMealsFromRoute(int WeekNumber)
+	public async Task<IActionResult> GetWeeklyMealsFromRoute(int weekNumber)
 	{
 		try
 		{
 
-			DateTime target = DateTime.Now.AddDays(7 * WeekNumber);
+			int rand = random.Next()%100;
+			DateTime target = DateTime.Now.AddDays(7 * rand);
 
 			DateOnly dateFilter = new DateOnly(target.Year, target.Month, target.Day);
 
 			long id = long.Parse(_identityProvider.GetExecutorId());
-
 			var response = await _sender.Send(new GetWeeklyMealsQuery(dateFilter, id));
 
 			if (response.IsFailure)

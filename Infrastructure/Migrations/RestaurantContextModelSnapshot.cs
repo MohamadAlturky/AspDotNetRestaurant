@@ -210,8 +210,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AtDay")
-                        .IsUnique();
+                    b.HasIndex("AtDay");
 
                     b.HasIndex("Id")
                         .IsUnique();

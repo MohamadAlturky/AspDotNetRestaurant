@@ -1,19 +1,16 @@
 ﻿using Domain.Localization;
 using Infrastructure.DataAccess.DBContext;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using SharedKernal.DomainEvents;
-using SharedKernal.Entities;
+using Microsoft.Extensions.Logging;
 using SharedKernal.Repositories;
 using System.Data;
-using System.Threading;
 
 namespace Infrastructure.DataAccess.UnitOfWork;
 public class UnitOfWork : IUnitOfWork
 {
 	private readonly RestaurantContext _context;
-
+	private readonly ILogger<RestaurantContext> _logger;
 	//private readonly IPublisher _publisher;
 
 	//public UnitOfWork(RestaurantContext context, IPublisher publisher)
@@ -21,8 +18,23 @@ public class UnitOfWork : IUnitOfWork
 	//	_context = context;
 	//	_publisher = publisher;
 	//}
-	public UnitOfWork(RestaurantContext context)
+	//var domainEvents = _context.ChangeTracker
+	//	.Entries<AggregateRoot>()
+	//	.Select(tracker => tracker.Entity)
+	//	.SelectMany(aggregateRoot =>
+	//	{
+	//		var domainEvents = aggregateRoot.DomainEvents;
+	//		aggregateRoot.ClearDomainEvents();
+	//		return domainEvents;
+	//	})
+	//	.ToList();
+	//foreach (var domainEvent in domainEvents)
+	//{
+	//	_publisher.Publish(domainEvent);
+	//}
+	public UnitOfWork(RestaurantContext context, ILogger<RestaurantContext> logger)
 	{
+		_logger = logger;
 		_context = context;
 	}
 
@@ -44,35 +56,27 @@ public class UnitOfWork : IUnitOfWork
 
 	public async Task SaveChangesAsync()
 	{
-		//var domainEvents = _context.ChangeTracker
-		//	.Entries<AggregateRoot>()
-		//	.Select(tracker => tracker.Entity)
-		//	.SelectMany(aggregateRoot =>
-		//	{
-		//		var domainEvents = aggregateRoot.DomainEvents;
-		//		aggregateRoot.ClearDomainEvents();
-		//		return domainEvents;
-		//	})
-		//	.ToList();
-		//foreach (var domainEvent in domainEvents)
-		//{
-		//	_publisher.Publish(domainEvent);
-		//}
 		try
 		{
 			await _context.SaveChangesAsync();
 		}
-		catch (DBConcurrencyException)
+		catch (DBConcurrencyException exception)
 		{
+			_logger.LogError("When Saving The Changes At {@DateTimeUTC} {StackTrace}",
+				DateTime.UtcNow,exception.StackTrace);
 			throw new Exception(LocalizationProvider.GetResource(DomainResourcesKeys.DBConcurrencyException));
 		}
-		catch (DbUpdateConcurrencyException)
+		catch (DbUpdateConcurrencyException exception)
 		{
+			_logger.LogError("When Saving The Changes At {@DateTimeUTC} {StackTrace}",
+				DateTime.UtcNow, exception.StackTrace);
 			throw new Exception(LocalizationProvider.GetResource(DomainResourcesKeys.DBConcurrencyException));
 		}
-		catch (Exception)
+		catch (Exception exception)
 		{
-			throw new Exception("حدثت مشكلة في قاعدة المعطيات حاول ثانيةً");
+			_logger.LogError("When Saving The Changes At {@DateTimeUTC} {StackTrace}",
+				DateTime.UtcNow, exception.StackTrace);
+			throw new Exception(LocalizationProvider.GetResource(DomainResourcesKeys.DBConcurrencyException));
 		}
 	}
 }

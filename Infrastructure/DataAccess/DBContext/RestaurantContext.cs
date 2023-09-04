@@ -1,21 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.DataAccess.DBContext;
 public class RestaurantContext : DbContext
 {
-
-	public RestaurantContext(DbContextOptions<RestaurantContext> options)
+	private readonly IConfiguration _configuration;
+	public RestaurantContext(DbContextOptions<RestaurantContext> options,IConfiguration configuration)
 			: base(options)
 	{
+		_configuration = configuration;	
 	}
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
 		if (!optionsBuilder.IsConfigured)
 		{
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-			optionsBuilder.UseSqlServer("server=DESKTOP-OO326C9\\SQLEXPRESS;database= Restaurant;Trusted_Connection=True; Encrypt=False;");
+			optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
+			//optionsBuilder.UseSqlServer("server=DESKTOP-OO326C9\\SQLEXPRESS;database= TheRestaurant;Trusted_Connection=True; Encrypt=False;");
 		}
 	}
 	protected override void OnModelCreating(ModelBuilder builder)
