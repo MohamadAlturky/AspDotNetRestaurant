@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations;
 
-public partial class hasan : Migration
+public partial class last : Migration
 {
 	protected override void Up(MigrationBuilder migrationBuilder)
 	{

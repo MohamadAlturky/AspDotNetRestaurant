@@ -33,4 +33,9 @@ public class DomainResourcesKeys
 		= "PasswordMisMatch";
 	public const string DBConcurrencyException
 		= "DBConcurrencyException";
+
+	public const string ForgetPasswordBody 
+		= "ForgetPasswordBody";
+	public const string ForgetPasswordTitle 
+		= "ForgetPasswordTitle";
 }

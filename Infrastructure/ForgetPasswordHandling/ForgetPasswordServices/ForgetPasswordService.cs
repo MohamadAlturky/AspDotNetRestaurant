@@ -1,4 +1,5 @@
-﻿using Infrastructure.Authentication.Models;
+﻿using Domain.Localization;
+using Infrastructure.Authentication.Models;
 using Infrastructure.DataAccess.UserPersistence;
 using Infrastructure.ForgetPasswordHandling.Models;
 using Infrastructure.ForgetPasswordHandling.Repository;
@@ -63,8 +64,8 @@ internal class ForgetPasswordService : IForgetPasswordService
 
 				await _emailSender.SendEmailAsync(new EmailMessage()
 				{
-					Content = code,
-					Subject = "ForgetPassword"
+					Content = LocalizationProvider.GetResource(DomainResourcesKeys.ForgetPasswordBody) +"\n"+ code,
+					Subject = LocalizationProvider.GetResource(DomainResourcesKeys.ForgetPasswordTitle)
 
 				}, new MailAccount()
 				{

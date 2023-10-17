@@ -1,5 +1,4 @@
-﻿using Application.Reservations.UseCases.CollectPassedReservations;
-using Domain.Customers.Repositories;
+﻿using Domain.Customers.Repositories;
 using Domain.Localization;
 using Domain.MealInformations.Repositories;
 using Domain.Meals.Repositories;
@@ -59,7 +58,6 @@ public static class DependencyInjection
 		services.AddScoped<IForgetPasswordRepository, ForgetPasswordRepository>();
 		services.AddScoped<IDomainLocalizer, DomainLocalizer>();
 		services.AddScoped(typeof(LocalizationBuilder));
-
 		services.AddQuartz(options =>
 		{
 			options.UseMicrosoftDependencyInjectionJobFactory();

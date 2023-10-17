@@ -17,7 +17,6 @@ public static class DependencyInjection
 		services.AddScoped(typeof(IQueryLogger<>), typeof(QueryLogger<>));
 		services.AddScoped<IReservationsService,ReservationsService>();
 		services.AddScoped<IMealEntryService, MealEntryService>();
-
 		/// proxies
 		services.AddScoped<ICustomersSupDomainProxy, CustomersSupDomainProxy>();
 		services.AddScoped<IPricingRecordsSupDomainProxy, PricingRecordsSupDomainProxy>();

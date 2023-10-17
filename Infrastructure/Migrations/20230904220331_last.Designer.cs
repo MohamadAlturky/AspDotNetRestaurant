@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
-    [Migration("20230903205311_hasan")]
-    partial class hasan
+    [Migration("20230904220331_last")]
+    partial class last
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

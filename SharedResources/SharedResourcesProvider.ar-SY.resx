@@ -120,10 +120,25 @@
   <data name="DBConcurrencyException" xml:space="preserve">
     <value>حدث تضارب ضمن قاعدة المعطيات حاول ثانيةً</value>
   </data>
+  <data name="ForgetPasswordBody" xml:space="preserve">
+    <value> رمز التحقق الخاص بك</value>
+  </data>
+  <data name="ForgetPasswordTitle" xml:space="preserve">
+    <value>هل نسيت كلمة المرور؟</value>
+  </data>
   <data name="Name" xml:space="preserve">
     <value>الاسم</value>
   </data>
+  <data name="NegativeBalanceException" xml:space="preserve">
+    <value>حساب الزبون لا يمكن أن يكون سالباً</value>
+  </data>
+  <data name="NegativePriceException" xml:space="preserve">
+    <value>السعر لا يمكن أن يكون سلباً</value>
+  </data>
   <data name="PasswordMisMatch" xml:space="preserve">
     <value>عذراً كلمة المرور خاطئة، في حال نسيانك لكلمة المرور إضغط نسيت كلمة المرور</value>
+  </data>
+  <data name="SomeOneHasTheSameSerialNumberException" xml:space="preserve">
+    <value>يوجد شخص يحمل نفس الرقم الذاتي</value>
   </data>
 </root>
